@@ -39,11 +39,14 @@
 # --- ----------------------------------------------------------------- |
 #  gh Gerhard Haering <gerhard.haering@gmx.de>				|
 # bga Billy G. Allie <bill.allie@mug.org>				|
+# eds Eric Soroos <eric@soroos.net>                                     |
 #=======================================================================|
 # Revision History:							|
 #									|
 # Date      Ini Description						|
 # --------- --- ------------------------------------------------------- |
+# 01AUG2011 eds Patch for hex bytea encoding used in pg9.0+, fixes for  |
+#               mixed tabs and spaces (2.5.2)                           |
 # 02JUN2006 gh  Use pg_config on all platforms.                         |
 # 01JUN2006 gh  Removed RPM-specific hack. Use pg_config on win32.      |
 # 26SEP2005 gh  Changed win32 build process to use MSVC.NET (needed     |
@@ -84,7 +87,7 @@ import os, os.path, sys
 from distutils.core import setup
 from distutils.extension import Extension
 
-__version__ = "2.5.1"
+__version__ = "2.5.2"
 
 # Define the runtime library path for this module.  It starts out as None.
 

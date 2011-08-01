@@ -1,0 +1,6 @@
+=====ToDo=====
+
+  - Quoting needs to be done with the PQescapeStringConn, PQEscapeByteaConn 
+    methods to ensure proper quoting. 
+
+  - The hex encoding switch should be done automatically from the connection. 

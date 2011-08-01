@@ -3,6 +3,8 @@
 Changes since pyPgSQL Version 2.5
 =================================
 
+Added support for hex bytea encoding used in PG 9.0+
+
 Patch for a security hole in PostgreSQL (CVE-2006-2314): escaping quotes with
 backslashes is insecure.  The change is to escape single quotes with
 another single quote: \' => ''.  Thanks to Martin Pitt for the patch.
