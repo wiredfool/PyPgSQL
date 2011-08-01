@@ -1,0 +1,64 @@
+#ident "@(#) $Id: README.win32,v 1.5 2006/06/01 14:39:29 ghaering Exp $"
+Information about pyPgSQL development and use on Windows operating systems
+==========================================================================
+
+by Gerhard Häring (gh@ghaering.de)
+
+THIS DOCUMENT IS OBSOLETE!
+
+1. Compiling PostgreSQL's libpq client library
+==============================================
+
+1.1 With Visual C++
+-------------------
+
+This is described in the chapter "Installation on Windows" in the PostgreSQL
+documentation: in a shell, change into the src directory of your PostgreSQL
+source tree and issue "nmake -f win32.mak".
+
+1.2 With gcc
+------------
+
+Building with gcc isn't supported by the vanilla PostgreSQL sources at the
+moment, but is still possible. First, you need to install a gcc capable of
+creating Windows binaries. Install the appropriate packages from the mingw32
+project or from Cygwin.
+
+I maintain patches to add Makefiles for compiling libpq with mingw32. They're
+available at http://pypgsql.sourceforge.net/misc/postgresql.html
+
+
+2. Building pyPgSQL
+===================
+
+2.1 Environment settings
+------------------------
+
+- Set the PG_SRC environment variable to your PostgreSQL source tree, if you
+  need to override the default setting of "../postgresql".
+
+2.2 Adjusting setup.py
+----------------------
+
+If you're using gcc, you can skip this step.
+
+For Visual C++, see the comments in the win32 section of setup.py, and
+(un)comment the various lines appropriately.
+
+2.3 Building
+------------
+
+Now that you've prepared everything, you can build pyPgSQL with
+$ python setup.py build				# Visual C++
+    or
+$ python setup.py build --compiler=mingw32	# gcc/mingw32
+
+install it with
+$ python setup.py install
+
+and create an installer with
+$ python setup.py bdist_wininst
+
+Remarks:
+- The "install" and bdist_wininst commands imply "build"
+- If you have also installed Cygwin's Python, be sure to invoke the win32 Python.

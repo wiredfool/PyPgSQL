@@ -1,0 +1,1056 @@
+#ident "$Id: ChangeLog,v 1.23 2006/06/07 17:21:28 ghaering Exp $"
+
+Changes since pyPgSQL Version 2.5
+=================================
+
+Patch for a security hole in PostgreSQL (CVE-2006-2314): escaping quotes with
+backslashes is insecure.  The change is to escape single quotes with
+another single quote: \' => ''.  Thanks to Martin Pitt for the patch.
+
+
+Changes since pyPgSQL Version 2.4
+=================================
+
+Changes to README
+-----------------
+* Updates for 2.5.
+
+Changes to PgSQL.py
+-------------------
+* Additional attribute cursor.debug:
+
+    Setting this attribute to 'text' will cause the query that will
+    be executed to be displayed to STDOUT.  If it is set to 'pre' or
+    'div', the query will be displayed to STDOUT within a <pre> or
+    <dif> HTML block.  If it is set to None (the default), the query
+    will not be displayed.
+
+* New module-level variable useUTCtimeValue:
+
+    Setting this variable to 1 will cause the datatime instance returned from
+    the result set for a timestame with timezone to reference the corresponding
+    UTC time value (not the value expressed in the clients time zone).
+
+* mxDateTime's RelativeDateTime instead of DateTimeDelta is now used for
+PostgreSQL INTERVALs.
+
+* Several other fixes in the PostgreSQL interval code
+
+* Several bugfixes in the PgNumeric type
+
+*  PgInt2 and PgInt8 used to be custom number types that checked for overflows
+in their specific ranges. In order to make them work across current Python
+versions we got rid of them and replaced them with int and long.
+
+* Many changes in parameter quoting to make them work in more cases like
+* PostgreSQL procedures
+
+Changes to libpqmodule.c
+------------------------
+* Bugfix for quoting Bytea types
+
+Changes to pgconnection.c
+-------------------------
+* Fixed compatibility problems with PostgreSQL 8.x.
+* Added debug support
+
+Changes to pgresult.c
+---------------------
+* Integrated patch #1224272. Use PyOS_ascii_strtod instead of strtod in order
+  to be locale-agnostic.
+
+Changes to pgversion.c
+----------------------
+* Applied patch #882032. Vendor-extensions to version
+  number should not create problems any longer.
+
+* Fixed Bug #786712 & #816729: Allowed for a version string
+  containing the words "alpha" and "beta".
+
+
+
+Changes since pyPgSQL Version 2.3
+=================================
+
+=-=-=-=-=-=-=-=-=-=-=-=-=- ** IMPORTANT NOTE ** =-=-=-=-=-=-=-=-=-=-=-=-=-=
+NOTE: There is a change to the Connection.binary() function that *could*
+      cause existing code to break.  Connection.binary() no longer commits
+      the transaction used to create the large object.  The application
+      developer is now responsible for commiting (or rolling back) the
+      transaction.
+-=-=-=-=-=-=-=-=-=-=-=-=-= ** IMPORTANT NOTE ** -=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Changes to README
+-----------------
+* Updates for 2.4.
+ 
+Changes to PgSQL.py
+-------------------
+* Applied patch from Laurent Pinchart to allow _quote to correctly process
+  objects that are sub-classed from String and Long types.
+* Change the name of the quoting function back to _quote. Variables named
+  like __*__ should be restrict to system names.
+* PgTypes is now hashable.  repr() of a PgType will now	return the repr()
+  of the underlying OID.
+* Connection.binary() will now fail if autocommit is enabled.
+* Connection.binary() will no longer commit the transaction after creating
+  the large object.  The application developer is now responsible for
+  commiting (or	for rolling back) the transaction [Bug #747525].
+* Added PG_TIMETZ to the mix [Patch #708013].
+* Pg_Money will now accept a string as a parameter.
+* PostgreSQL int2, int, int4 will now be cast into Python ints.  Int8 will
+  be cast into a Python long.  Float4, float8, and money types will be
+  cast into a Python float.
+* Correct problem with the PgNumeric.__radd__ method.  [Bug #694358]
+* Correct problem with conversion of negitive integers (with a given scale
+  and precision) to PgNumerics.  [Bug #694358]
+* Work around a problem where the precision and scale of a query result
+  can be different from the first result in the result set.  [Bug #697221]
+* Change the code so that the display length in the cursor.description
+  attribute is always None instead of '-1'.
+* Fixed another problem with interval <-> DateTimeDelta	casting.
+* Corrected a problem that caused the close of a portal (ie. PostgreSQL
+  cursor) to fail.
+* Corrected a problem with interval <-> DateTimeDelta casting.  [Bug #653044]
+* Corrected problem found by Adam Buraczewski in the __setupTransaction
+  function.
+* Allow both 'e' and 'E' to signify an exponent in the PgNumeric constructor.
+* Correct some problems that were missed in yesterday's	fixes (Thanks,
+  Adam, for the help with the problems)
+
+Changes to libpqmodule.c
+------------------------
+* On win32, we usually statically link against libpq.  Because of
+  fortunate circumstances, a problem didn't show up until now: we need to
+  call WSAStartup() to initialize the socket stuff from Windows *in our
+  module* in order for the statically linked libpq to work.  I just took
+  the relevant DllMain function from the libpq sources and put it here.
+* Modified some comments to reflect reality.
+* Applied patch from Laurent Pinchart:  In libPQquoteString, bytea are
+  quoted using as much as 5 bytes per input byte (0x00 is quoted '\\000'),
+  so allocating (slen * 4) + 3 is not enough for data that contain lots of
+  0x00 bytes.
+* Added PG_TIMETZ to the mix [Patch #708013].
+	
+Changes to pgboolean.c
+----------------------
+* Change the name of the quoting function back to _quote.  __*__ type
+  names should be restricted to system names.
+
+Changes to pgconnection.c
+-------------------------
+* Applied patch by Laurent Pinchart to correct a problem lo_import,
+  lo_export, lo_unlink.
+* In case PQgetResult returns NULL, let libPQgetResult return a Python
+  None, like the docstring says.  This is necessary in order to be able
+  to cancel queries, as after cancelling a query with PQrequestCancel,
+  we need to read results until PQgetResult returns NULL.
+	
+Changes to pglargeobject.c
+--------------------------
+* Change the name of the quoting function back to _quote.  __*__ type
+  names should be restricted to system names.
+
+Changes to pgnotify.c
+---------------------
+* Fixed a bug in the code.  The code in question use to work, but doesn't
+  anymore (possible change to libpq?).
+
+Changes since pyPgSQL Version 2.2
+=================================
+
+The following source code files were added to Version 2.3 of pyPgSQL:
+
+    setup.config	- Part of the changed distutils-based build process.
+			  If you want to customize the build process
+			  (change include and library directories, for
+			  example, you only need to edit this file;
+			  setup.py should not be edited directly any
+			  longer)
+
+    unicode_tests.py	- Test suite for the new Unicode support. Merged
+                          from the Unicode patch.
+
+Changes to setup.py
+-------------------
+* This file was rewritten entirely so that pyPgSQL now builds out of the
+  box on Windows, Cygwin, Debian Linux, Redhat Linux, SuSE Linux, FreeBSD,
+  UnixWare 7 and OpenUNIX 8. These are the platforms the new build process
+  has been tested on. Untested support is available for Mandrake Linux,
+  NetBSD, OpenBSD and MacOS X.
+
+Changes to README
+-----------------
+* Updates for 2.3.
+* Converted the whole document into reStructuredText, so we can easily
+  built a HTML version using docutils (http://docutils.sf.net/).
+
+Changes to README.win32
+-----------------------
+* Remove out of date warning about PostgreSQL on win32
+* Reflected change from windows/ to ports/
+ 
+Changes to PgSQL.py
+-------------------
+* Fixed various problems with the PgNumeric constructor and formatting
+  routines.
+* Fixed problems with new __setupTransaction function:
+      1. Made it a method of Connection, not Cursor.
+      2. inTransaction was only set if TransactionLevel was set.
+* Fixed instances where method name was incorrect:
+      Connection__gcCursor    -> _Connection__gcCursor
+      Connection__closeCursor -> _Connection__closeCursor
+* Cleaned up code where there was unneeded references to conn in Connection
+  class.
+* Handle the new '__quote__' method for arrays, too.
+* Still handle '_quote' methods for backwards compatibility.
+* Fixed changed PG_TIMESTAMP oid, added PG_TIMESTAMPTZ and PG_REFCURSOR oids.
+* Reference cursors are now type-casted into cursor objects.
+* Completed the emulation of a String object for the PgBytea and PgOther
+  classes.  This corrects several problems with PgBytea concerning compari-
+  sons, using PgBytea types as keys in dictionaries, etc.
+* Added the __hash__ function to the PgNumeric class.  Cleaned up the code
+  in PgNumeric class and made some small improvments to it.
+* Added the PgArray class.  This is a wrapper around a Python list and is
+  used for all PostgreSQL arrays.  This change was made so that lists and
+  tuples no longer have a special meaning in the Cursor.execute() method.
+* Changed the quoting methods defined in the various classes defining
+  PostgreSQL support types to __quote__.
+* Merged the Unicode patch. pyPgSQL now has full Unicode support.
+* Added support for the INTERVAL type.
+* mxDateTime 1.x is no longer supported. Require mxDateTime 2.x and give
+  useful error message if import fails.
+* Cosmetic changes: use cmp builtin where appropriate.
+* Fixed typo where PgTypes.__str__ was spelled incorrectly; compare to None
+  using "is" operator.
+* Take into account that libpq.PgInt8Type might not be
+  available.
+* Convert ROWID to PgInt8 instead of PgInt4 (the original behaviour led to 
+  overflow errors.)
+* Always set the displaysize field of cursor.description to -1.
+  PostgreSQL 7.3 doesn't provide this information any more and it's pretty
+  useless nowadays that we've mostly left line printers beyond us.
+
+Changes to pyPgSQL/__init__.py
+------------------------------
+* Register libpq.PgInt8 with copy_reg only if available.
+
+Changes to pglargeobject.c
+--------------------------
+* Made the 'closed' attribute of PgLargeObject an int instead of a long.
+	
+Changes to libpqmodule.c:
+-------------------------
+* Fixed the changed PG_TIMESTAMP oid, added PG_TIMESTAMPTZ and PG_REFCURSOR
+  oids. [Bug #845360]
+* Fixed the format string of ParseTuple in libPQbool_FromInt.
+  This closes a bug that appeared on Linux/Alpha (#625121).
+
+Changes to pgversion.c:
+-----------------------
+* Changed pgversion to recognize release canidate versions of PostgreSQL.
+
+Changes to PgSQL test cases:
+----------------------------
+* Updated test cases to allow for changes in PostgreSQL 7.3.
+* Don't check for the obsolete displaysize field in cursor.description.
+  Also don't check the backend encoding.
+
+Multiple files
+--------------
+The windows/ directory has been moved to a port/ directory. Now we *always*
+use our own version of various string versions instead of special casing for a
+dozen different Windows and Unix platforms.
+
+In order to get the C version of PgInt8Type, it is now required that the
+constants LLONG_MAX, LLONG_MIN, ULLONG_MAX and ULLONG_MIN are defined when
+including limits.h and that including Python.h defines HAVE_LONG_LONG.
+Otherwise, a Python class is used instead.
+
+Changes since pyPgSQL Version 2.1
+=================================
+
+The following source code files were added to Version 2.2 of pyPgSQL:
+
+    pyPgSQL.spec	- RPM spec file, contributed by Sean Reifschneider.
+
+Changes to README
+-----------------
+* Added note about case-insensitiveness of column access in PgResultSet.
+
+Changes to PgSQL.py
+-------------------
+* Fixed various problems with the PgResultSet: Column (attribute and
+dictionary) access is now case-insensitive.  A __contains__ method was added
+and the __setattr__ method was fixed. The get method got an optional default
+value parameter.
+
+* Fixed various problems with the PgNumeric type:
+  - Added code to allow a float as an argument to the PgNumeric constructor.
+  - You can now change the precision/scale of a PgNumeric by:
+      a = PgNumeric(pgnumeric, new prec, new scale).
+    This can be used to 'cast' a PgNumeric to the proper precision and scale
+    before storing it in a field.
+  - The arithmatic routines (__add__, __radd__, etc) now ensure that the
+    arguments are properly coerced to the correct types.
+  - Added support for the augmented arithmetic operations (__iadd__, etc).
+  - The math routines would lose precision because the precision/ scale were
+    set to be the same as the first operand.  This is no longer the case all
+    precision is retained for the +, -, and * operations.
+
+* Fixed problem that occurs when a query on an OID field doesn't return any
+rows. [Bug #589370].
+	
+* Applied patch #569203 and also added __pos__ and __abs__ special methods to
+PgNumeric.
+
+* Ensure proper SQL-quoting of long ints.
+
+Changes to PgSQLTestcases.py
+----------------------------
+* 14 new tests, mostly for PgNumeric and PgResultSet.
+
+Changes since pyPgSQL Version 2.0
+=================================
+
+pyPgSQL 2.1 is now compatible and tested to work with PostgreSQL 7.2.x.
+
+Changes to README
+-----------------
+* Added documentation for the new TransactionLevel attribute of
+the Connection object.
+
+Changes to PgSQL.py
+-------------------
+* Added code to implement support for setting PostgreSQL transaction
+levels. [Feature Request #481727].
+
+* Got rid of redundant building and storing of the
+mapping of column names to column positions in the PgResultSet class. Now,
+rows of the same query are instances of a dynamically created class, which
+has this mapping as a class attribute instead of an attribute of the
+instance. This saves a lot of space, and also slightly increases
+performance of cursor fetches.
+	
+* Fixed the array parsing so it also works with PostgreSQL versions 7.2.x.
+The PostgreSQL developers changed the quoting in the string representation
+of arrays in 7.2 beta cycle: strings are now only quoted when otherwise
+the array representation would be ambiguous. The new parseArray() method
+should handle the old and new way of quoting in arrays. [Bug #539769].
+Also added a new testcase for the ARRAY type.
+
+* Improved the array parsing, so that it now passes all
+the new mean testcases. Added support for parsing multidimensional arrays.
+Eventually, the array parsing code should go as a support function into
+libpq.
+
+* Replaced all typechecks with "is" operators instead
+of equals. Mark McEahern had a problem with using pyPgSQL in combination
+with a FixedPoint class where the reason was that the FixedPoint class was
+not comarable to None. The consensus on python-list was that None and all
+types are singletons, so they should be checked using "is", which is also
+faster, because it only checks for object identity.
+
+* Fixed a couple of problems found by Steven D. Arnold:
+1. A undefined variable was used in a few places where notices were popped
+   from the notice list.
+2. Comparisons between 2 PgNumerics gave the wrong result.
+
+* Fixed problem that occurs when the sum() aggregate returns a
+NULL. [Bug #505162].
+
+Changes to pgversion.c
+----------------------
+* Allow for development and beta versions of PostgreSQL
+
+Changes to libpqmodule.c
+------------------------
+* Removed special escaping of control characters in arrays.
+
+* Added support for two missing OID types: aclitem and macaddr. 
+
+* Applied patch by Chris Bainbridge [Patch #505941] "fix for null bytes in
+bytea".
+
+Changes to pgresult.c
+---------------------
+* Change the point at which an OID is tested to see if it is a
+Large Object from 1700 to 16383.
+
+Changes since pyPgSQL Version 1.6
+=================================
+
+pyPgSQL is now a 'real' python package (i.e. there is a directory named
+pyPgSQL that contains a file named __init__.py).  PgSQL and libpq are now
+modules contained in the pyPgSQL package.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=- ** IMPORTANT NOTE ** =-=-=-=-=-=-=-=-=-=-=-=-=-=
+NOTE: This change requires the use of 'from pyPgSQL import PgSQL' to import
+      the PgSQL module, and 'from pyPgSQL import libpq' to import the libpq
+      module.  
+-=-=-=-=-=-=-=-=-=-=-=-=-= ** IMPORTANT NOTE ** -=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Changes to PgSQL.py
+-------------------
+
+ *  It appears that under certain circumstances,  PostgreSQL will not
+    return a precision/scale value for a numeric column when no result rows
+    are returned [Bug #477792].  The problem is fixed by using a precision
+    and scale of (30,6) when this condition occurs.
+
+ *  Change the import of DateTime to avoid conflicts with ZOPE's builtin
+    DateTime module.
+
+ *  Added code to ensure that creation of a binary object via the binary()
+    method always occurs within the context of a transaction.
+
+ *  Change code so that the escaping/quoting is different if the result is
+    to be used to build PostgreSQL arrays.
+
+ *  Modified all the Object._quote methods so that they now accept an
+    option argument, forArray, which if set to 1 will cause escaping /
+    quoting for PostgreSQL array use.
+
+ *  Re-organized the code use to build PostgreSQL arrays.
+ 
+ *  Added additional PostgreSQL types to BINARY, ROWID, etc.
+
+ *  Fixed problems associated with type casting.
+
+Changes to libpqmodule.c
+------------------------
+ *  Added support for the pickling of libpq objects.  In particular, for
+    PgVersion and PgConnection objects.
+
+ *  Added a cntructor method for PgVersion objects.
+
+ *  Changed all new style comments to original style.
+
+ *  Change PgQuoteString and PgQuoteByta so that unsigned char pointers are
+    used instead of signed char pointers.
+
+ *  Added different quoting/escaping if the result is to be used as part of
+    a PostgreSQL array.
+
+ *  Change the quoting/escaping helper routines so that they also escape
+    the double quote character.
+
+ *  Added a PgLargeObject constructor.
+
+Changes to pgboolean.c
+----------------------
+ *  Change the constructors so that they return PyObject * instead of
+    PgBooleanObject *.
+
+Changes to pgconnection.c
+-------------------------
+ *  Fixed a possible memory leak.
+
+ *  Added the lo_export() method.  It was overlooked in the original code.
+
+ *  Added support for the pickling of PgConnection objects.  In particular,
+    a hidden method was added to return the connection information string
+    used to create the connection.
+
+ *  Changed all new style comments to original style.
+
+ *  Added some brakets to clarify ambiguous else clauses.
+
+ *  Fixed numerous bugs found during the development of the regression test
+    cases for pgconnection.c.
+
+ *  The PgConnection's attributes are now set to a value of None when
+    finish() is called.
+
+Changes to pgint2object.c
+-------------------------
+ *  Changed all new style comments to original style.
+
+ *  Change the constructors so that they return PyObject * instead of
+    PgInt2Object *.
+
+Changes to pgint8object.c
+-------------------------
+ *  Changed all new style comments to original style.
+
+ *  Change the constructors so that they return PyObject * instead of
+    PgInt8Object *.
+
+Changes to pglargeobject.c
+--------------------------
+ *  Closed some memory leaks.  This leaks had only a small probability of
+    occuring.
+
+ *  Added support for the pickling of large objects.  In particular, a
+    method was added to retrieve the info needed to recreate the large
+    object.  Also, the open() and close() methods were changed to create
+    and end transaction in the un-pickled large objects in order to create
+    the context in which large object must be used.
+
+ *  Added a _quote() funtion.
+
+ *  Ensure that INV_BIN is not in the mode variable when lo_open is
+    called.
+
+ *  Removed static declaration from validmodes[].  It's now used by
+    lo_create in pgconnection.c also.
+
+Changes to pgresult.c
+---------------------
+ *  [Bug #474771] Found and plugged a memory leak in the PgResult_New()
+    function.  An object for the value of PGcmdStatus was being created
+    twice, leaving an extra copy around to consume memory.
+
+ *  Added support for the pickling of pyPgSQL objects.
+
+ *  Change error message returned by PgResult_ntuple_check if no tuples
+    were returned in the result.  The returned error message now makes
+    sense.
+
+ *  Added support for the PostgreSQL BYTEA type.
+
+ *  I have removed resultErrorMessage as an attribute.  It doesn't make
+    sense to leave it since it will always be None.  Why?  Because any
+    query that generates an error will raise an exception, not return a
+    PgResult.
+
+Changes since pyPgSQL Version 1.5.1
+===================================
+
+The following regression test cases have been added.  Each regression test
+is designed to rigorously test a specific part of pyPgSQL:
+
+    pgresult.py     - Test cases for the libpq.PgResult object.
+    pgversion.py    - Test cases for the libpq.PgVersion object.
+    pgconnection.py - Test cases for the libpq.PgConnection object.
+
+Changes to PgSQL.py
+-------------------
+ *  Added support for the PostgreSQL BYTEA type.  This will allow binary
+    values to be stored in the database without the use of Large Objects.
+
+ *  [Bug #455514, #464213] Changed how strings are escaped/quoted for use as
+    parameter in queries.  Modified code so that array elements are quoted
+    differently from regular attributes.  The repr function is no longer used.
+
+ *  Changed code so that libpq notices are only converted to Warning exceptions
+    in certain specific cases.  This will prevent Warning exceptions from
+    occuring when tables with serial fields are created, etc.  When Python 2.2
+    is released, it's Warning framework will be used for libpq notices.
+
+ *  Cleaned up the logic in hadleArray().
+
+ *  Updated the PgSQL.__doc__ string.
+
+ *  [Feature Request #462588] Cursor.close() no longer ends (rollback) the
+    open transaction when the last cursor is closed.
+
+ *  On Connection.close(), reset all the attributes to a sane state (i.e.
+    None or 0, as appropriate).
+
+ *  [Bug #462589] In a fit of optimization, I had introduced a bug that
+    caused comparisons of PgResultSets to anything to fail.  This bug has
+    been squashed.
+
+ *  Fixed several cases of references to non-existing globals in PgMoney.
+
+ *  Previously, I was not building up the description attribute if no rows
+    were returned.  The description attribute is now built on the first
+    successful select or cursor fetch.
+
+Changes to libpqmodule.c
+------------------------
+ *  [Bug #455514, #464213] Added a new function to escape/quote strings.  This
+    function will escape/quote values used as array elements differently from
+    regular fields.
+
+ *  Added a new functions to escape/un-escape strings used as input/output
+    to/from bytea fields.  These function will escape/quote values used as
+    array elements differently from regular fields.
+
+ *  Removed code related to PostgreSQL 6.5.x.  We now only support
+    PostgreSQL 7.0 and later.
+
+ *  Changed 'long long' to 'LONG_LONG'.  That way there is no assumption of
+    how a 64bit integer is declared.
+
+Changes to pgboolean.c
+----------------------
+ *  Fix bug in PgBoolean_FromString; also improve and simplify the string
+    stripping in this method.
+
+Changes to pgconnection.c
+-------------------------
+ *  Removed the pgFixEsc() function.  It is no longer needed since repr() is
+    not used to escape/quote strings.
+
+ *  Changed code so that a PgConnection object's members are set to None if
+    the finish() method is called.
+
+ *  Corrected bugs found while developing a set of regression tests for
+    pgconnection.c.
+
+ *  Re-ordered the items in PgConnection_members so that the attributes
+    handled directly by PgConnection_getattr are grouped together and
+    commented appropriately.
+
+ *  Removed code related to PostgreSQL 6.5.x.  We now only support
+    PostgreSQL 7.0 and later.
+
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+Changes to pgint2object.c
+-------------------------
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+Changes to pgint8object.c
+-------------------------
+ *  Modified code for 64bit (long long) support in the MS Windows
+    environment with MS Visual C++.
+
+ *  Made changes to avoid use of long long constants.  This was done to
+    assist in the use of MS Visual C++, which uses something other than LL
+    to specify long long constants. (It's ugly, I know.  Thanks MS.)
+
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+Changes to pglargeobject.c
+--------------------------
+ *  Removed an un-used variable.
+
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+Changes to pgnotify.c
+---------------------
+ *  Clarified an embedded assignment within an if test.
+
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+Changes to pgresult.c
+---------------------
+ *  Removed code related to PostgreSQL 6.5.x.  We now only support
+    PostgreSQL 7.0 and later.
+
+ *  Fixed a gcc reported int format <-> long int argument mis-match.
+
+ *  Added check to make sure that the result was from a DQL (Data Query
+    Language) statement in methods that only make sense for DQL statement
+    results (fname(), etc.).
+
+ *  Methods that take field and/or tuple indices will now raise an
+    exception if those indices are out of range.  The previous behavior
+    was to return the error code from the underlying PostgreSQL C-API
+    function.
+
+ *  The fnumber() method will now raise an exception if it is passed a
+    string that is not a valid column name.  The previous behavior was to
+    return the error code from the PostgreSQL C-API PQfnumber function.
+
+ *  Correct some incorrect comments.
+
+ *  Use PyObject_Del() instead of PyMem_Free() in dealloc() to delete the
+    object.
+
+ *  Added a cache (implemented with a Python Dictionary) for OIDs to hold
+    the result of the check to see if the OID is a large object.  This
+    should reduce the number queries sent to the database for this
+    purpose.
+
+ *  Add code to not check OIDs whose value is less than or equal to 1700
+    (PG_NUMERIC).  These OIDs are not large objects.
+
+Changes to pgversion.c
+----------------------
+ *  Removed variables that are no longer needed/referenced.
+
+ *  Fixed code so that coercion generates an exception if the other object
+    could not be converted to a PgVersion object.
+
+ *  Fixed problem where a variable in PgVersion_New() could be used before
+    it was initialized.
+
+ *  Improved detection of erroneous input strings.
+
+ *  Various minor bug fixes and code cleanup.
+
+ *  Made constructed version string more closely mimic the actual format of
+    the PostgreSQL version string.
+
+ *  Having a __dict__ attribute and calling PyMember_Get() in the
+    PyVersion_getattr function causes dir() to do strange things (like list
+    members twice).  I've removed the __dict__ attribute and added methods
+    to emulate a mapping object to PgVersion.  A PgVersion object will now
+    act like a dictionary, so use version[key] instead of
+    version.__dict__[key].
+
+ *  Make PgVersion_New safe for arbitrary input strings.
+
+ *  Make the repr method really return the version string.
+
+ *  Initialize a variable (value) in ver_coerce() to quite an erroneous gcc
+    warning message.
+
+Changes since pyPgSQL Version 1.5
+=================================
+
+Compiled the code with options to perform extra syntactic, symantic, and
+lint-like checks and corrected any problems that were found.
+
+Changes to pglargeobject.c
+--------------------------
+ * Why did I introduce a new variable (save) and execute another call to
+   lo_tell() when it wasn't needed?  (I have to stop working on code late
+   at night. :-)
+
+ * Fixed another bug in PgLo_read().  This one would only rear it's ugly
+   head when read() was called with no arguments, and then, only sometimes.
+   (I REALLY need to stop working on code late at night [or is that early
+   in the morning] :-).
+
+Changes to pgnotify.c
+---------------------
+ * Changed calls to PyObject_DEL() to  Py_XDECREF() when deleting objects
+   embedded in my extension objects.  This corrects a problem expirenced on
+   MS Windows.
+
+Changes to pgresult.c
+---------------------
+ * Part of the logic for building the cursor.desccription attribute retrives
+   an OID from the database that is usually zero (0).  This causes a query to
+   the database to check to see if the OID represents a large object.  An OID
+   of zero can never be a large object, so the code was changed so that when
+   the OID is zero, the check to see if it is a large object is skipped.
+
+Changes to setup.py
+-------------------
+ * Add include_dirs and lib_dirs for building on cygwin.  This change should
+   allow pyPgSQL to build 'out of the box' on MS Windows using the cygwin
+   environment.
+
+Changes since pyPgSQL Version 1.4
+=================================
+
+The code for PgConnection, PgLargeObject, PgNotify, and PgResult was
+moved from libpqmodule.c into separate source files.  This was done to 
+make it easier to work on the individual pieces of the code.
+
+The following source code files were added to Version 1.5 of pyPgSQL:
+
+    libpqmodule.h	- This include file brings together all the 
+			  various header files needed to build libpqmodule
+			  into one place.
+    pgconnection.[ch]	- Implements the PgConnection class.
+    pglargeobject.[ch]	- Implements the PgLargeObject class.
+    pgnotify.[ch]	- Implements the PgNotify class.
+    pgresult.[ch]	- Implements the PgResult class.
+
+Also, any constant, read-only attributes in PgConnection, PgLargeObject,
+PgNotify, PgResult, and PgVersion are now stored as a Python object instead
+of as a native C type.  This was done so that when the attribute is refer-
+enced in Python, it does not have to be converted to a Python object.
+
+Changes to PgSQL.py
+-------------------
+ *  Change the code to rollback an open transaction, if any, when the last
+    cursor of a connection is closed. [Bug #454653]
+
+ * Added code that will, if weak references are not available, remove any
+   cursors that are only referenced from the connection.cursors list.  This
+   is in effect garbage collection for deleted cursors.  The garbage col-
+   lection of orphaned cursor will occur at the following points:
+       1.  After a new cursor is created.
+       2.  When a cursor is closed.
+       3.  When the connection.autocommit value is changed.
+
+ * Changed cursor.isClosed to cursor.closed.  Why? closed is used in other
+   object (file and PgLargeObject, for example) and I thought I would
+   follow the trend (i.e. for no good reason).
+
+ * Change from the use of hash() to generate the portal name to the use of
+   id().
+
+ * Added code to trap a failure to connect to a database and delete the
+   Connection object on failure.  This resolves the problem reported by
+   Adam Buraczewski. [Bug #449743]
+
+ * Fixed a bug in fetchmany() that could return more than the requested
+   rows if PostgreSQL Portals aren't used in the query.
+
+Changes to libpqmodule.c
+------------------------
+ * Moved code for PgLargeObject, PgNotify, PgConnection, and PgResult to
+   their own files.  This was done to make maintenance easier.
+
+Changes to pgconnection.c
+-------------------------
+ * Changed how ibuf is defined in pgFixEsc to ensure that the memory pointed
+   to by ibuf is allocated from the stack, and thus is writable memory.  The
+   way it was defined before could result in the memory being allocated in a
+   read-only segment. [Bug #450330]
+
+Changes to pgresult.c
+---------------------
+ * Changed the return type of result.cmdTuple from a Python String object
+   to an Integer object.
+
+ * The code now used pgversion.post70 as a Python Integer.
+
+ * Constant, read-only attributes are now stored as Python objects.  This
+   way they do not have to be created each time they are referenced.
+
+
+Changes to pgversion.c
+----------------------
+ * Change code to use Py_BuildValue() for creating Python objects from C
+   values (where possible).
+
+ * Change attributes that were read-only constants from a C type to a
+   Python Object.  This way they don't need to be converted to a Python
+   Object each time they are referenced.
+
+ * General code clean up.  Removed some definitions that are in the new
+   libpqmodule.h header file.
+
+Changes since pyPgSQL Version 1.3
+=================================
+
+The PgVersion object (formally implemented as a Python class named PgVer)
+was re-implemented in C and moved into the libpq module.  This was done to
+allow PostgreSQL version specific processing to be handled without having
+to compile different version of libpqmodule.c.  In particular, the way to
+determine if an OID represents a large object changed in version 7.1 of
+PostgreSQL.
+
+The following source code files were added to Version 1.4 of pyPgSQL:
+
+    pgversion.[ch]	- Implements the PgVersion object.
+    pgmemstrdup.c	- Implements a version of strdup() that gets the
+			  memory it needs from Python's heap.
+    windows/strtoll.c	- These are are additional source files needed to
+    windows/strtoull.c	  compile pyPgSQL in the M$ Windows environment.
+
+Changes to PgSQL.py
+-------------------
+ * The PgVer object is now implemented in C (as PgVersion) and has been
+   moved to the libpq module.  This was done to support handling of large
+   objects in libpq based on the PostgreSQL version.
+
+ * Changed the code so that execute will not attempt to do parameter subsi-
+   tution on the query string if no additional parameters are passed to
+   execute.
+
+ * Fixed a nasty little bug involving the difference between PgInt[28] as a
+   type object and PgInt[2|8] as a class.  I was not correctly handling the
+   distinction in the code.
+
+Changes to libpqmodule.c
+------------------------
+ * Added code to correctly identify large object in PostgreSQL 7.1.x and
+   above. [Bug# 444563]
+
+ * Re-implemented the PgVer object in C (as PgVersion) and moved it the
+   PgConnection object in libpq.  This allows PostgreSQL version specific
+   code (i.e. different large object handling in PostgreSQL 7.1 and above)
+   to be used without compiling for a specific version.
+
+ * Change code so that memory used to duplicate strings is allocated from
+   Python's heap.
+
+ * Fixed some possible memory leaks.
+
+ * Added code that will fixup the escapes seqenced sent from Python for
+   non-printable characters into a form that PostgreSQL will accept.  This
+   fixes a bug reported by Greg Brauer <greg@wildbrain.com>.
+
+Changes since pyPgSQL Version 1.2
+=================================
+
+The PgInt2 and PgInt8 type objects (formally implemented as Python classes)
+were re-implemented in C.  The PgInt8 C implementation will only be used if
+long_longs are supported in your architecture, other wise a Python implemen-
+tation will be used (based on Python's long type).
+
+Changes to PgSQL.py
+-------------------
+ * Used weak references (if available) to remove the problem of circular
+   references between the Connection object and the Cursor objects created
+   with it.  The circular references between the Connection object and it's
+   associated TypeCache object are also resolved.
+
+ * Fixed incorrect reference to .__reset() in the connection object.
+
+ * Changed .execute() so that if a SELECT statement is executed the remaining
+   results (if any) of a previous SELECT statement is discarded and replaced
+   with the results of the new SELECT query.  The previous behavior was to
+   raise an InterfaceError in that situation.
+
+ * Since .execute() will call the reset method as needed, the .reset() method
+   was renamed to .__reset() to make private (at least a private as it gets
+   in Python :-).
+
+ * Change 'version' so that it holds the version number of PgSQL.py.
+   PostgreSQL version information is now held in 'version' attribute of the
+   connection object.
+
+ * Modified the code so that the .close() method in Cursor conforms to the
+   DB-API 2.0 specification.  Closing a cursor now prevents it from being
+   used any further, and dis-associates the cursor from it's connection.
+   Committing or rolling back a transaction will no longer closes all the of
+   connection's cursors.  It will, however, reset the cursor to it's initial
+   result and invalidate any unread query results.
+
+ * Reworked the code so that the .__getattr__() method in Cursor is no longer
+   needed.
+
+ * Change ._reset_() so that it closes the PostgreSQL portal, if one is
+   opened.
+
+ * Renamed _reset_() to reset() and document it as an extension to the
+   DB-API 2.0 specification.
+
+ * Updated the PgSQL.__doc__ string.
+
+ * Added code to load DateTime from an alternate location (from mx import
+   DateTime) if import DateTime failed.  The alternate location came from a
+   patch submitted by Gerhard Häring <ghaering@sf.net>.
+
+ * Minor bug fixes and improvements.
+
+ * Improved the speed of initializing a new PgResultSet by pre-building the
+   name to index dictionary when the cursor description attribute is built.
+
+ * Modified code to use the C implementation of the PgInt2 object.
+
+Changes to libpqmodule.c
+------------------------
+ * To the extent possible, I pick out the "lint" from the code.  In the
+   process, I discovered some nasty little bugs in little used (or tested)
+   routines.
+
+ * Changed PyObject_HEAD_INIT(&PyType_Type) to PyObject_HEAD_INIT(NULL) to
+   silence error produced by some compilers.
+
+ * Modified code to use C implementation of PgInt2 type.
+
+ * Modified code to use C implementation of PgInt8 type.  This code will only
+   be used if LONG_LONG is defined.
+
+Changes since pyPgSQL Version 1.1
+=================================
+
+Changes to PgSQL.py
+-------------------
+ * Fixed a problem with the emulated numeric types that caused exponentiation
+   ('x ** y') to fail.
+
+ * Fixed PgInt8, PgInt2, and PgMoney __rdiv()__ method.
+
+ * Added missing __hash__() and __cmp__() methods to PgOther and PgMoney.
+
+ * Added missing __hash__() method to PgTypes.
+
+ * Changed all occurances of OverflowException to OverflowError.
+
+ * Cleaned up some minor bugs caused by typos and also cleaned up some minor
+   inefficiencies.
+
+ * Made some additional changes in an effort to improve performance.  Mostly,
+   it was removing __getattr__ from the Connection and Cursor classes.
+
+ * Delayed getting the version number of the PostgreSQL back end until the
+   first time a connection to the database is made.  The newly created
+   connection is used to perform the 'SELECT version()' query.
+
+ * Made some minor changes to __fetchOneRow() in an effort to improve
+   performance.  In particular, setting the variable named
+   PgSQL.fetchReturnsList = 1 will cause __fetchOneRow() (and subsequentially,
+   all the fetch*() methods) to return a list instead of a PgResultSet.  This
+   should improve the performance of the fetch*() methods by sacrificing the
+   convenient access methods provided by a PgResultSet.
+
+ * Made some performance improvements in the following methods/functions:
+	TypeCahce.typecast()
+	Cursor.__getattr__()
+	Cursor.__setattr__()
+	Connection.__setattr__()
+   These changes are based on ideas from Ondrej Palkovsky
+   (ondrap@users.sourceforge.net).
+
+Changes since PgSQL Version 1.0
+=================================
+The package name was changed from pgsql-unix to pypgsql-unix.
+
+ * Corrected error in the __nonzero__ method of PgInt2 and PgInt8.
+
+ * PostgreSQL only supports read-only cursors.  Because of this, any
+   SELECT ... FOR UPDATE queries will not use a	PostgreSQL cursor.
+
+ * PostgreSQL 7.1.1 can now rollback deletions of large objects.  Modify
+   PgSQL to reflect that fact.
+
+ * Fixed the (broken) handling of empty lists in the _handleArray()
+   function.
+
+ * PostgreSQL can now rollback drops of tables and indices.  Modify PgSQL
+   to reflect that fact.
+
+ * Corrected a problem with the Connection class that could cause an exception
+   with the __del__() method is called for the Connection object.
+
+ * Fixed problem where a value casted (in PostgreSQL) to a NUMERIC(s,p) did
+   not have the correct scale and precision returned from PostgreSQL.  The
+   scale and precision is guessed at in this case.
+
+   Note:  The precision will be accurate, but the scale may be undersized.
+
+ * Fixed the handling of a singleton parameter to execute().
+
+ * Since null_ok (in description) is not implemented yet, have it set to None
+   instead of 0.
+
+ * Changed executemany() to accept only 2 parameters -- the query and a
+   sequence containing the parameters.  If the query expects multiple
+   parameters then the sequence must contain tuples containing the multiple
+   parameters.
+
+ * Added the __del__ function to PgConnection.
+
+ * Fixed problem with PgMoney, PgInt8, PgInt2:
+    - Comparing values of these types to None use to throw an exception.
+    - Numeric type conversions (float(), long(), etc.) were not working in all
+      cases.
+
+ * Added numeric conversion routines (__float__, __long__, etc.) to PgNumeric.
+
+ * Added support the 'pyformat' paramstyle.
+   Thanks Christopher A. Craig <ccraig@users.sourceforge.net>, for the patch.
+
+ * Added the 'oidValue' attribute to the cursor object to expose the PgResult
+   oidValue in PgSQL.
+
+ * Cleaned up some error messages and corrected some that were mis-leading.
+
+ * Fixed code so that cursor.rowcount alwasys has a sane (i.e. correct)
+   value.  There were many cases where the value was incorrect.  It should be
+   much better now.
+
+ * Released a reference to the PgConn notice list when the PgConnection
+   object is closed.
+
+Changes to libpqmodule.c
+------------------------
+ * Changed all references with PyObject_NEW() to PyObject_New().
+
+ * Added a wrapper around Pg_{BEGIN|END}_ALLOW_THREADS so they only
+   allow/disallow threads in PostgreSQL v7.0 or later.
+
+Changes to pgboolean.c
+----------------------
+ * Fixed a problem with the coerce routine that prevented PgBoolean comparisons
+   with None to fail (in Python2.1 only).
+

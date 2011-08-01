@@ -1,0 +1,1711 @@
+:Version: #ident "@(#) $Id: README,v 1.34 2006/06/01 14:39:29 ghaering Exp $"
+
+----------------------------------------------------------------------------
+pyPgSQL - v2.5: Python DB-API 2.0 Compliant Interface Module for PostgreSQL.
+----------------------------------------------------------------------------
+===============================
+0. Copyright notice and License
+===============================
+
+    pyPgSQL, version 2.5
+    A Python DB-API 2.0 compliant interface for PostgreSQL
+    Copyright 2000 by Billy G. Allie.
+    All rights reserved.
+
+    Permission to use, copy, modify, and distribute this software and it's
+    documentation for any purpose and without fee is hereby granted,
+    provided that the above copyright notice appear in all copies and that
+    both that copyright notice and this permission notice appear in
+    supporting documentation, and that the copyright owner's name not be
+    used in advertising or publicity pertaining to distribution of the
+    software without specific, written prior permission.
+
+    THE AUTHOR(S) DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+    INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+    NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+    CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+    USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+
+=================
+1.  About pyPgSQL
+=================
+
+1.1 Introduction
+----------------
+
+PostgreSQL is a sophisticated Object-Relational DBMS, supporting almost all SQL
+constructs, including sub-selects, transactions, and user-defined types and
+functions. It is the most advanced open-source database available anywhere More
+information about PostgreSQL can be found at the PostgreSQL home page at
+http://www.postgresql.org.
+
+Python is an interpreted, interactive, object-oriented programming language.
+It combines remarkable power with very clear syntax.  It has modules, classes,
+exceptions, very high level dynamic data types, and dynamic typing.  There are
+interfaces to many system calls and libraries, as well as to various windowing
+systems (X11, Motif, Tk, Mac, MFC).  New builtin modules are easily written in
+C or C++.  Python is also usable as an extension language for applications that
+need a programmable interface.  Python is copyrighted but freely usable and
+distributable, even for commercial use.  More information about Python can be
+found on the Python home page at http://www.python.org.
+
+pyPgSQL is a package of two (2) modules that provide a Python DB-API 2.0
+compliant interface to PostgreSQL databases.  The first module, libpq,
+exports the PostgreSQL C API to Python.  This module is written in C and
+can be compiled into Python or can be dynamically loaded on demand.  The
+second module, PgSQL, provides the DB-API 2.0 compliant interface and
+support for various PostgreSQL data types, such as INT8, NUMERIC, MONEY,
+BOOL, ARRAYS, etc.  This module is written in Python.  This version works
+with PostgreSQL 7.0 or later and Python 2.1 or later.
+
+pyPgSQL was originally developed on a UnixWare 7.1.1 system, but is nowadays
+also developed on Windows and Linux.
+
+1.2 Distribution Files
+----------------------
+
+    :README:                    This file.
+    :Announce:                  Announcement of this release.
+    :ChangeLog:                 changes to this package during it's history.
+    :libpqmodule.c:             the C code implementing the libqp module.
+    :pgboolean.[ch]:            the C code implementing the PostgreSQL BOOL
+                                type object for Python.
+    :pgconnection.[ch]:         the C code implementing the PgConnection
+                                class.
+    :pgint2object.[ch]:         the C code implementing the PostgreSQL INT2
+                                type object for Python.
+    :pgint8object.[ch]:         the C code implementing the PostgreSQL INT8
+                                type object for Python.
+    :pglargeobject.[ch]:        the C code implementing the PgLargeObject
+                                class.
+    :pgnotify.[ch]:             the C code implementing the PgNotify class.
+    :pgresult.[ch]:             the C code implementing the PgResult class.
+    :pgversion.[ch]:            the C code implementing the PgVersion
+                                class.
+    :pymemstrdup.c:             the C code implementing a version of strdup()
+                                that uses Python's heap for the needed memory.
+    :pyPgSQL/__init__.py:       the initialization code for the pyPgSQL
+                                package.
+    :pyPgSQL/PgSQL.py:          the module that implements the Python DB-API 2.0
+                                compliant interface to PostgreSQL
+    :pyPgSQL/libpq:             the package for the libpq module.
+    :pyPgSQL/libpq/__init__.py: the initialization code for the libpq
+                                package.
+    :setup.py:                  Distutil setup file for building and installing
+                                pyPgSQL
+    :port/*:                    String functions imported from the FreeBSD
+                                source tree and given a pg prefix.
+    :test/PgSQLTestCases.py:    A set of functional test cases built using
+                                the Python Unit Testing Framework (PyUnit)
+    :test/regression/*:         Test cases to test specific sections of
+                                pyPgSQL.
+    :examples/*:                Some example programs using libpq and PgSQL
+
+1.3 Installation
+----------------
+
+These instructions assume you have Python 2.0 (or later) and at least
+PostgreSQL 7.0 (7.2 or later recommended) installed on your system.  If you are
+going to use the DB-API 2.0 compliant module, you must also install the
+mxDateTime module from http://starship.python.net/~lemburg/mxDateTime.html.
+
+a.  Download pyPgSQL files if you haven't already done so.
+
+b.  Edit the setup.py file to reflect the your environment.  The setup.py file
+    contains comments regarding USE_CUSTOM to guide you in customizing this
+    file.
+
+c.  Execute ``python setup.py build`` to build the extension module.
+
+d.  Execute ``python setup.py install`` to install the extension module.
+
+(On many platforms, you can skip step b. as the necessary paths are
+automatically detected.)
+
+:NOTE:  You may require root access to install the module.
+	Consult your local system administrator.
+
+1.4 Testing the PgSQL module.
+-----------------------------
+
+To run the tests, enter the following command from the PgSQL source
+directory:
+
+    ``python test/PgSQLTestCases.py``
+
+If the test cases run without any failures, then you can be reasonably sure
+that the module built correctly.
+
+There are additional test cases in test/regression that you can run. These
+require that an empty database *pypgsql* exists locally with *UNICODE*
+encoding and with the ability to execute PL/pgsql functions. You can create
+such a database with the following commands::
+
+	createdb -E UNICODE pypgsql
+	createlang plpgsql pypgsql
+
+1.5 Additional information about ...
+------------------------------------
+
+Additional information about the different packages is available at:
+
+    :Python:            http://www.python.org
+    :PostgreSQL:        http://www.PostgreSQL.org
+    :mxDateTime:        http://starship.python.net/~lemburg/mxDateTime.html
+
+===========================
+2.  Programming Information
+===========================
+
+2.1 The libpq module
+--------------------
+	
+2.1.1 Importing libpq
+---------------------
+
+The module, libpq, is part of the pyPgSQL package.  It is imported using
+the following statement:
+
+    >>> from pyPgSQL import libpq
+
+
+2.1.2 libpq Constants
+----------------------
+
+There are a number of constants defined in libpq.  They are intended to be
+used as parameters for method calls and to compare against certain results
+generated by method calls.  You should refer to the libpq section of the
+PostgreSQL programmer's manual for information about them.  These constants
+are:
+
+    Connection related constants:
+
+        CONNECTION_OK, CONNECTION_BAD, POLLING_FAILED, POLLING_READING,
+        POLLING_WRITING, POLLING_OK, POLLING_ACTIVE
+
+    Query related constants:
+
+        EMPTY_QUERY, COMMAND_OK, TUPLES_OK, COPY_OUT, COPY_IN,
+        BAD_RESPONSE, NONFATAL_ERROR, FATAL_ERROR
+
+    Large Object related constants:
+
+        INV_SEEK_SET, INV_SEEK_CUR, INV_SEEK_END, INV_READ, INV_WRITE
+
+    Constants for PostgreSQL type (OID) identifiers:
+
+        Character String Types:
+
+            PG_TEXT, PG_CHAR, PG_VARCHAR, PG_NAME, PG_BPCHAR
+
+        Number Types:
+
+            PG_INT4, PG_INT2, PG_INT8, PG_OID, PG_NUMERIC, PG_FLOAT8,
+            PG_FLOAT4, PG_MONEY (aka PG_CASH)
+
+        Temporal Types:
+
+            PG_DATE, PG_TIME, PG_TIMESTAMP, PG_TIMESTAMPTX, PG_INTERVAL,
+            PG_ABSTIME, PG_RELTIME, PG_TINTERVAL
+
+        Logical (boolean) Type:
+
+            PG_BOOL
+
+        Geometric Types:
+
+            PG_POINT, PG_LSEG, PG_PATH, PG_BOX, PG_LINE, PG_CIRCLE,
+            PG_POLYGON
+
+        Network Types:
+
+            PG_INET, PG_CIDR
+
+        Misc. Types:
+
+            PG_REFCURSOR
+
+The following constants are defined for use by the libpq module and have no
+direct relationship to constants in PostgreSQL's C API:
+
+    PgResult related constants:
+
+        :RESULT_DDL:   result was generated by a DDL query.
+        :RESULT_DQL:   result was generated by a DQL query.
+        :RESULT_DML:   result was generated by a DML query.
+        :RESULT_EMPTY: query generated an empty result.
+        :RESULT_ERROR: query generated an error.
+
+    PgBoolean constants:
+
+        PG_True, PG_False
+
+2.1.3 libpq Methods
+-------------------
+
+The following methods are defined by libpq:
+
+    :PQconnectdb:           preferred method to connect to a database.
+    :PQconndefaults:        returns a list containing the connection
+                            defaults.
+    :PQresStatus:           returns a string representation of the result
+                            status.
+    :PQresType:             returns a string representation of the result
+                            type.
+    :PQftypeName:           returns a string name for a PostgreSQL type
+                            (oid).
+    :PgBoolean:             creates a PgBoolean object from a string or
+                            number.
+    :PgBooleanFromString:   Deprecated, use PgBoolean().
+    :PgBooleanFromInteger:  Deprecated, use PgBoolean().
+    :PgInt2:                creates a PgInt2 object from a string or
+                            number.
+    :PgInt8:                creates a PgInt8 object from a string or
+                            number.
+    :PgLargeObject:         creates a PgLargeObject from a connection and
+                            OID.
+    :PgVersion:             creates a PgVersion object from a string.
+    :PgQuoteString:         Quotes a string, escaping any characters as
+                            needed, for use as input to a character/text
+                            field.
+    :PgQuoteBytea:          Escapes a string, which can contain NUL
+                            characters, so that it can used as an input to
+                            a bytea field.
+    :PgUnQuoteBytea:        Reverses the action of PgQuoteBytea().
+
+2.1.3.1 PQconnectdb
+-------------------
+
+*Syntax*:
+    c = PQconnectdb(conninfo)
+
+    Where conninfo is a string containing connection information.
+
+*Returns*:
+    A PgConnection object.
+
+*Description*:
+    Implements the PostgreSQL C API's PQconnectdb function.
+
+*Exceptions*:
+    DatabaseError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.3.2 PQconndefaults
+----------------------
+
+*Syntax*:
+    l = PQconndefaults()
+
+*Returns*:
+    A list of default connection options.  A default connection options is
+    a list containing [keyword, envvar, compiled, val, label, dispchar,
+    dispsize].
+
+*Description*:
+    Implements the PostgreSQL C API's PQconndefaults function.
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.3.3 PQresStatus
+-------------------
+
+*Syntax*:
+    s = PQresStatus(status)
+
+*Returns*:
+    A string representation of the result status code, 'status'.
+
+*Description*:
+    Implements the PostgreSQL C API's PQresStatus function.
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.3.4 PQresType
+-----------------
+
+*Syntax*:
+    s = PQresType(type)
+
+*Returns*:
+    A string representation of the result type, 'type'.
+
+*Description*:
+    The result type is generated by the libpq module (not by the PostgreSQL
+    C API library) and describes the result type (DDL, DQL, DML, EMPTY, or
+    ERROR).
+
+*Exceptions*:
+    InterfaceError
+
+*Returns*:
+    A string representation of the result type code, 'type'.
+
+2.1.3.5 PQftypeName
+-------------------
+
+*Syntax*:
+    s = PQftypeName(type)
+
+*Returns*:
+    A string representation of the PostgreSQL type, 'type'.
+
+*Description*:
+    This method returns a string representation of the PostgreSQL type,
+    'type'.  This string is useful for displaying the type code.  This
+    method has no corresponding PostgreSQL C API function.
+
+2.1.3.6 PgBoolean
+-----------------
+
+*Syntax*:
+    b = PgBoolean(object)
+
+*Description*:
+    This method returns a PgBoolean object initialized from the
+    value of object.  It recognizes the following string values:
+
+	For true.: '1', 'T', 'TRUE', 'Y', 'YES', 'ON'
+	For false: '0', 'F', 'FALSE', 'N', 'NO', 'OFF'
+
+    For numeric object, zero is false, non-zero is true.
+
+*Returns*:
+    PG_True or PG_False based on the value of 'object'
+
+2.1.3.7 PgInt2
+--------------
+
+*Syntax*:
+    n = PgInt2(object)
+
+*Description*:
+    This method returns a PgInt2 object initialized from the value of the
+    string or numeric 'object'.  The PgInt2 type uses a 2-byte integer to
+    store it's value.
+
+*Returns*:
+    A PgInt2 object initialized with the value of 'object'.
+
+2.1.3.8 PgInt8
+--------------
+
+*Syntax*:
+    n = PgInt8(object)
+
+*Description*:
+    This method returns a PgInt8 object initialized from the value of the
+    string or numeric 'object'.  The PgInt8 type uses a 8-byte integer to
+    store it's value.
+
+*Returns*:
+    A PgInt8 object initialized with the value of 'object'.
+
+2.1.3.9 PgLargeObject
+---------------------
+
+*Syntax*:
+    o = PgLargeObject(PgConnection, OID)
+
+*Description*:
+    This function will create a PgLargeObject object given a PgConnection
+    object and a PostgreSQL large object identifier (OID).
+
+*Returns*:
+    A closed PgLargeObject object.
+
+*Note*:
+    A PgLargeObject can not be opened outside the context of a transaction.
+    Because of this, large objects created with this method (and by
+    inference, un-pickled large objects) will begin a transaction (if
+    needed) in it's associated PgConnection object when the the large
+    object is opened.  When the large object is closed, the transaction
+    will be committed.  If a rollback is desired, pass close() an argument
+    of 1.
+
+2.1.3.10 PgQuoteString
+----------------------
+
+*Syntax*:
+    s = PgQuoteString(string, forArray)
+
+*Description*:
+    This function returns a copy of the input string with the
+    following characters escaped::
+
+	1.  The backslash character (as '\\')
+	2.  The single quote (as "\'")
+	3.  The <CR> character (as '\r')
+	4.  The <NL> character (as '\n')
+	5.  The <BS> character (as '\b')
+	6.  The <FF> character (as '\f')
+	7.  The <TAB> character (as '\t')
+	8.  All other control characters as '\OOO' where OOO is
+	    the octal representation of the character's ordinal
+	    number.
+	The string is also quoted with single quotes.
+
+	If forArray is one (1), the escaping is changed  as follows:
+	    1.  The backslash character (as '\\\\')
+	    (2 through 7 remain the same)
+	    8.  All other control characters as '\\\\000'
+	    9.  The double quote (as '\"')
+	The string is also quoted with double quotes, instead of single
+	quotes.
+
+*Returns*:
+    A quoted, escaped copy of the input string.
+
+2.1.3.11 PgQuoteBytea
+---------------------
+
+*Syntax*:
+    s = PgQuoteBytea(string)
+
+*Description*:
+    This function returns a copy of the input string with characters
+    escaped as follows::
+
+	1.  <NUL> characters: '\\000' (Note: with 2 backslashes)
+	2.  Non-printable characters: '\OOO' (Note OOO is the octal
+	    representation of the characters ordinal number)
+	3.  Backslashes: '\\\\' (Note: with 4 backslashes)
+	4.  Single quote: "\'"
+	The string is also quoted with single quotes.
+
+
+	If forArray is one (1), the escaping is changed  as follows:
+	    1.  <NUL> characters: '\\\\000' (Note: with 4 backslashes)
+	    2.  Non-printable characters: '\\\\OOO'
+	    3.  Backslashes: '\\\\\\\\' (Note: with 8 backslashes)
+	    4.  Single quote: "\'"
+	    5.  The double quote (as '\\"')
+	The string is also quoted with double quotes, instead of single
+	quotes.
+
+*Returns*:
+    A quoted, escaped copy of the input string.
+
+2.1.3.12 PgUnQuoteBytea
+-----------------------
+
+*Syntax*:
+    s = PgUnQuoteBytea(string)
+
+*Description*:
+    This function un-escapes a string retrieved from a bytea field.
+
+*Returns*:
+    A copy of the input string with any escaped character returned
+    to their original value.
+
+2.1.4 libpq Classes
+-------------------
+
+This module defines the following five (5) classes:
+
+    :PgConnection:  the connection class.  It handles the connection and all
+                    requests to the database.
+    :PgResult:      handles the query results.
+    :PgLargeObject: handles the access to PostgreSQL large objects.
+    :PgNotify:      the notify class.  It contains information about a
+                    notification event sent from a PostgreSQL backend process.
+    :PgVersion:     the version class.  It contains information about the
+                    version of the PostgreSQL backend that a connection
+                    object is connected to.
+
+The module makes error information available via the following exception
+objects, in addition to the standard Python exceptions:
+
+    Warning, Error, InterfaceError, DatabaseError, OperationalError,
+    IntegrityError, InternalError, ProgrammingError, NotSupportedError
+
+Additional information about these exceptions can be found in the Python
+DB-API 2.0 documentation.
+
+2.1.4.1 The PgConnection Object
+-------------------------------
+
+The PgConnection Object defines a connection to the PostgreSQL database.
+It has the following public, read-only attributes:
+
+    :host:         The server host name of the connection.  It returns the
+                   output of the PQhost PostgreSQL C API function.
+    :post:         The port used in the connection.  It returns the output of
+                   the PQport function.
+    :db:           The database name of the connection.  It returns the output
+                   of the PQdb function.
+    :options:      The backend options used in the connection.  It returns the
+                   output of the PQoptions function.
+    :tty:          The debug tty of the connection.  It returns the output of
+                   the PQtty function.
+    :user:         The user name of the connection.  It returns the output of
+                   the PQuser function.
+    :status:       The status of the connection.  It returns the output of the
+                   PQstatus function.
+    :errorMessage: The error message most recently generated by an operation
+                   on the connection.  It returns the output of the
+                   PQerrorMeesage function.
+    :backendPID:   The process ID of the backend handling this connection.  It
+                   returns the output of the backendPID function.
+    :isBusy:       Indicates if PQgetResult would block.  Used with
+                   asynchronous query processing.  It returns the output of
+                   the PQisBusy function (PostgreSQL 7.0 or later).
+    :socket:       The file descriptor for the backend connection socket.
+                   Used with asynchronous query processing.  It returns the
+                   output of the PQsocket function.
+    :notices:      A list of notices received by the PostgreSQL C API.  The
+                   notices are placed in the list so that the list.pop()
+                   method will retrieve the oldest notice on the list.
+
+                   :NOTE:  While this attribute is read-only, you can still
+			   manipulate the list using any of the list's methods
+			   (pop, append, insert, etc.).  You just can't assign
+			   a new value to the attribute.
+
+    :version:      version information about the backend that this connection
+                   object is connected to.
+
+The PgConnection Object has the following methods:
+
+    :connectPoll:    Poll the libpq C API for the connection status.
+    :query:          Execute a query and wait for the results.
+    :sendQuery:      Send a query to the backend without blocking.
+    :getResult:      Retrieve the results from the sendQuery method.
+    :setnonblocking: Make the connection non-blocking (or blocking).
+    :consumeInput:   If input is available from the backend, consume it.
+    :flush:          Attempt to flush any data queued on the backend.
+    :requestCancel:  Send a cancel query request to the backend.
+    :finish:         Close the connection and free memory used by the PQconn
+                     object.
+    :reset:          Reset the communication port with the backend.
+    :notifies:       Returns the next notification object (PgNotify) from a list
+                     of unhandled notification objects.
+    :getline:        Read a (newline-terminated) line of characters from the
+                     backend.
+    :getlineAsync:   Read a line of characters in a non-blocking manner.
+    :putline:        Send a null-terminated string to the backend.
+    :endcopy:        Sync with the backend (after a Copy-In/Copy-Out operation).
+    :lo_creat:       Create a new, empty PgLargeObject.
+    :lo_import:      Import a file as a PostgreSQL large object, returning a
+                     PgLargeObject.
+    :lo_export:      export a PostgreSQL large object to a file.
+    :lo_unlink:      Removes a PostgreSQL large object from the database.
+    :trace:          Enable tracing of frontend/backend communications.
+    :untrace:        Disable tracing start by the trace method.
+
+2.1.4.1.1 connectPoll (PostgreSQL 7.x and above)
+------------------------------------------------
+
+*Syntax*:
+    i = c.connectPoll()
+
+*Returns*:
+    An integer representing a Postgres Polling Status code.
+
+*Description*:
+    This method is used to determine the status of a connection started
+    with PQconnectStart().  This method implements the PQconnectPoll()
+    function and is used for asynchronous query processing.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.2 query
+---------------
+
+*Syntax*:
+    r = c.query(string)
+
+*Returns*:
+    A PgResult object.
+
+*Description*:
+    This method sends the SQL query, 'string', to the backend and
+    waits for the result.  It implement the PostgreSQL C API's
+    PQexec function.
+
+*Exceptions*:
+    InterfaceError, ProgrammingError, OperationalError,
+    InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.3 sendQuery
+-------------------
+
+*Syntax*:
+    c.sendQuery(string)
+
+*Description*:
+    This method send the SQL query, 'string', to the backend without
+    waiting for the result.  It implements the PQsendQuery function and is
+    used for asynchronous query processing.
+
+*Exceptions*:
+    InternalError, InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.4 getResult
+-------------------
+
+*Syntax*:
+    r = c.getResult()
+
+*Returns*:
+    A PgResult object.
+
+*Description*:
+    Wait for and retrieve the results from a previous sendQuery call.  It
+    implements the PQgetResult function and is used for asynchronous query
+    processing.
+
+*Exceptions*:
+    InterfaceError, ProgrammingError, OperationalError,
+    InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.5 setnonblocking (PostgreSQL 7.x and above)
+---------------------------------------------------
+
+*Syntax*:
+    c.setnonblocking(mode)
+
+*Description*:
+    Set the connection to non-blocking if 'mode' is non-zero, otherwise set
+    it to blocking.  This method implements the PQsetnonblocking()
+    function.
+
+*Exceptions*:
+    InterfaceError, InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.6 consumeInput
+----------------------
+
+*Syntax*:
+    c.consumeInput()
+
+*Description*:
+    If input is available from the backend, consume it.  This method
+    implements the PQconsumeInput function and is used with asynchronous
+    query processing.
+
+*Exceptions*:
+    InterfaceError, InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.7 flush (PostgreSQL 7.x and above)
+------------------------------------------
+
+*Syntax*:
+    c.flush()
+
+*Description*:
+    If input is available from the backend, consume it.  This method
+    implements the PQflush function and is used with asynchronous query
+    processing.
+
+*Exceptions*:
+    InterfaceError, InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.8 requestCancel
+-----------------------
+
+*Syntax*:
+    c.requestCancel()
+
+*Description*:
+    Send a cancel request to the backend.  Note that the successful
+    dispatching of the request does not mean the request will be canceled.
+    This method implements the PQrequestCancel function and is used with
+    asynchronous query processing.
+
+*Exceptions*:
+    InterfaceError, InternalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.9 finish
+----------------
+
+*Syntax*:
+    c.finish()
+
+*Description*:
+    Close the connection to the database and invalidates the PgConnection
+    object.  Any attempt to use the PgConnection object after finish is
+    called will raise an InterfaceError.  Used by the PQconn object.  The
+    database connection is automatically closed when the PgConnection
+    object is deleted, so calling finish explicitly is never needed. This
+    method implements and extends the PQfinish function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.10 reset
+----------------
+
+*Syntax*:
+    c.reset()
+
+*Description*:
+    Close the connection to the backend and attempt to open a new
+    connection using the previously used parameters.  This method
+    implements the PQreset function.
+
+*Exceptions*:
+    InterfaceError, DatabaseError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.11 notifies
+-------------------
+
+*Syntax*:
+    n = c.notifies()
+
+*Returns*:
+    A PgNotify object containing data for the next notification message, or
+    None if there are no unhandled notifications.
+
+*Description*:
+    Retrieves the next notification from a list of unhandled notification
+    messages received from the backend.  Once a notification object is
+    returned, it is considered handled and will be removed from the list of
+    notifications.  This method implements the PQnotifies function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.12 getline
+------------------
+
+*Syntax*:
+    s = c.getline()
+
+*Returns*:
+    A newline-terminated string read from the backend.
+
+*Description*:
+    The getline method reads a newline-terminated string (transmitted by
+    the backend server) into a (dynamically sized) buffer.  This method
+    implements the PQgetline function and is used with the PostgreSQL COPY
+    command.
+
+*Exceptions*:
+    InterfaceError, TypeError, MemoryError, InternalError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.13 getlineAsync
+-----------------------
+
+*Syntax*:
+    s = c.getlineAsync()
+
+*Returns*:
+    A newline-terminated string read from the backend in a
+    non-blocking manner.
+
+*Description*:
+    The getlineAsync method reads a newline-terminated string (transmitted
+    by the backend server) into a (dynamically sized) buffer.  This method
+    implements the PQgetline function and is used with the PostgreSQL COPY
+    command.
+
+*Exceptions*:
+    InterfaceError, TypeError, MemoryError, InternalError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.14 putline
+------------------
+
+*Syntax*:
+    c.putline(s)
+
+*Returns*:
+    Sends a string to the backend.
+
+*Description*:
+    The putline method sends a (null-terminated) string to the backend.
+    This method implements the PQputline function and is used with the
+    PostgreSQL COPY command.
+
+*Exceptions*:
+    InterfaceError, TypeError, InternalError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.15 endcopy
+------------------
+
+*Syntax*:
+    c.endcopy()
+
+*Returns*:
+    Syncs with the backend.
+
+*Description*:
+    This function waits until the backend has finished the copy. It should
+    either be issued when the last string has been sent to the backend
+    using putline or when the last string has been received from the
+    backend using getline. It must be issued or the backend may get "out of
+    sync" with the frontend.  This method implements the PQputline function
+    and is used with the PostgreSQL COPY command.
+
+*Exceptions*:
+    InterfaceError, TypeError, InternalError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.16 lo_creat
+-------------------
+
+*Syntax*:
+    lo = c.lo_creat(mode)
+
+*Returns*:
+    A PgLargeObject.
+
+*Description*:
+    Create a PostgreSQL large object with the given mode.  This method
+    implements the lo_creat function.
+
+*Exceptions*:
+    InterfaceError, OperationalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.17 lo_import
+--------------------
+
+*Syntax*:
+    lo = c.lo_import(filename)
+
+*Returns*:
+    A PgLargeObject
+
+*Description*:
+    Imports a file named 'filename' into a PostgreSQL large object.  This
+    method implements the lo_import function.
+
+*Exceptions*:
+    InterfaceError, OperationalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.18 lo_export
+--------------------
+
+*Syntax*:
+    c.lo_export(oid, filename)
+
+*Returns*:
+    A PgLargeObject
+
+*Description*:
+    Exports a PostgreSQL large object, represented by oid, to a file named
+    'filename'.  This method implements the lo_import function.
+
+*Exceptions*:
+    InterfaceError, OperationalError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.19 lo_unlink
+--------------------
+
+*Syntax*:
+    c.lo_unlink(oid)
+
+*Description*:
+    Removes the PostgreSQL large object identified by 'oid' from
+    the database.  This method implements the lo_unlink function.
+
+*Exceptions*:
+    InterfaceError, IOError, TypeError
+
+2.1.4.1.20 trace
+----------------
+
+*Syntax*:
+    c.trace(fileObject)
+
+*Description*:
+    Enables tracing of the frontend/backend communications to a
+    Python File Object, fileObject.  This method implements the
+    PQtrace function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.1.21 untrace
+------------------
+
+*Syntax*:
+    c.untrace()
+
+*Description*:
+    Disables tracing enabled by the trace method.  This method
+    implements the lo_import function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2 The PgResult Object
+---------------------------
+
+The PgResult object defines the result of a query.  It has the following
+public, read-only attributes:
+
+    :resultType:        the type of the result: DDL, DQL, DML, EMPTY, ERROR.
+    :resultStatus:      The result status of the query.  It returns the
+                        output of the PQresultStatus PostgreSQL C API
+                        function.
+    :ntuples:           The number of tuples (instances) in the query result.
+                        It returns the output of the PQntuples function call.
+    :nfields:           The number of fields (attributes) in each tuple of
+                        the query result.  It returns the output of the
+                        PQnfields function.
+    :binaryTuples:      Contains 1 if the PgResult object contains binary
+                        tuple data, 0 if it contains ASCII data. It returns
+                        the output of the PQbinaryTuples function call.
+
+                        :NOTE: Binary portals are not supported at this time.
+
+    :cmdStatus:         The command status string from the SQL command that
+                        generated the PGresult.  It returns the output to the
+                        PQcmdStatus function.
+    :cmdTuples:         The number of rows affected by the SQL command.  It
+                        returns the output of the PQcmdTuples function.
+    :oidValue:          (7.x and above) The object id of the tuple
+                        inserted, if the SQL command was an INSERT.
+                        Otherwise, contains None.  It returns the output of
+                        the PQoidValue function.
+
+The PgResult Object has the following methods:
+
+    :fname:     Returns the field (attribute) name associated with the given
+                field index.
+    :fnumber:   Returns the field (attribute) index associated with the given
+                field name.
+    :ftype:     Returns the type of a field.
+    :fsize:     Returns the size in bytes of the field.
+    :fmod:      Returns the type-specific modification data of a field.
+    :getvalue:  Returns a single field (attribute) value of one tuple of a
+                PgResult.
+    :getlength: Returns the length of a field (attribute) in bytes.
+    :getisnull: Tests a field for a NULL entry.
+    :clear:     Frees the memory used by result.
+
+2.1.4.2.1 fname
+---------------
+
+*Syntax*:
+    s = r.fname(fidx)
+
+*Returns*:
+    The field (attribute) name associate with the given field
+    index.
+
+*Description*:
+    Returns the field (attribute) name associated with the given
+    field index. Field indices start at 0.  It implements the
+    PQfname PostgreSQL C API function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.2 fnumber
+-----------------
+
+*Syntax*:
+    i = r.fnumber(name)
+
+*Returns*:
+    The field (attribute) index associated with the given field
+    name.
+
+*Description*:
+    Returns the field (attribute) index associated with the given
+    field name, 'name'.  A -1 is returned if the name does not
+    match any field.  It implements the PQfnumber function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.3 ftype
+---------------
+
+*Syntax*:
+    i = r.ftype(fidx)
+
+*Returns*:
+    Returns the field type associated with the given field index.
+
+*Description*:
+    The field type associated with the given field index.  The integer
+    returned is an internal coding of the type.  Field indices start at 0.
+    It implements the PQftype function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.4 fsize
+---------------
+
+*Syntax*:
+    i = r.fsize(fidx)
+
+*Returns*:
+    The size in bytes of the field associated with the given field
+    index.
+
+*Description*:
+    Returns the size in bytes of the field associated with the
+    given field index. Field indices start at 0.  fsize returns
+    type).  -1 is returned if the field is variable size.  It
+    implements the PQfsize function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.5 fmod
+--------------
+
+*Syntax*:
+    i = r.fmod(fidx)
+
+*Returns*:
+    The type-specific modification data of the field associated
+    with the given field index
+
+*Description*:
+    Returns the type-specific modification data of the field associated
+    with the given field index.  Field indices start at 0.  It implements
+    the PQfmod function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.6 getvalue
+------------------
+
+*Syntax*:
+    o = r.getvalue(tidx, fidx)
+
+*Returns*:
+    A single field (attribute) value of one tuple of a PGresult.
+
+*Description*:
+    Returns a single field (attribute) value of one tuple of a
+    PgResult.  Tuple and field indices start at 0.  If the field
+    is NULL, the None is returned.  The type of object returned
+    depends on the PostgreSQL data type of the field:
+
+                    ====================== =====================
+                    PostgreSQL Type        Returned Python Object
+                    ====================== =====================
+                    PG_BOOL                PgBoolean
+                    PG_OID                 Integer or PgLargeObject(1)
+                    PG_INT2                PgInt2
+                    PG_INT4                Integer
+                    PG_INT8                PgInt8(2) or Long
+                    PG_MONEY               Float
+                    PG_FLOAT4              Float
+                    PG_FLOAT8              Float
+                    PG_BYTEA               String(3)
+                    All Other Types        String
+                    ====================== =====================
+
+                    (1) getvalue() will determine if the OID represents a
+                        PostgreSQL Large Object and returns the appropriate
+                        object.
+                    (2) PgInt8 type is only available on system that have
+                        long long (64 bit integer) support.
+                    (3) Any escaped characters in the string will be returned
+                        to their original value in the returned string.
+
+                getvalue implements and extends the PQgetvalue function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+2.1.4.2.7 getlength
+-------------------
+
+*Syntax*:
+    i = r.getlength(tidx, fidx)
+
+*Returns*:
+    The length of a field (attribute) in bytes.
+
+*Description*:
+    Returns the length of a field (attribute) in bytes.  Tuple and
+    field indices start at 0.  This is the actual data length for
+    the particular data value, that is the size of the object
+    pointed to by getvalue. Note that for ASCII-represented values,
+    this size has little to do with the binary size reported by
+    fsize.  It implements the PQgetlength function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.8 getisnull
+-------------------
+
+*Syntax*:
+    i = r.getisnull(tidx, fidx)
+
+*Returns*:
+    1 if the field contains a NULL, 0 if it contains a non-null
+                value.
+
+*Description*:
+    Tests a field for a NULL entry. Tuple and field indices start
+    at 0.  This function returns 1 if the field contains a NULL, 0
+    if it contains a non-null value.  (Note that getvalue will return None
+    for a NULL field.)  It implements the PQgetisnull function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.2.9 clear
+---------------
+
+*Syntax*:
+    r.clear()
+
+*Description*:
+    Frees the storage associated with a PgResult and invalidates
+    the PgResult object.  Any attempt to access the PgResult will
+    generate an InterfaceError exception.  The PgResult is automatically
+    cleared when the PgResult if deleted, so calling clear explicitly is
+    never needed.  It implements and extends the PQclear function.
+
+*Exceptions*:
+    InterfaceError, TypeError
+
+*Note*:
+    See the PostgreSQL C API documentation for details.
+
+2.1.4.3 The PgLargeObject object
+--------------------------------
+
+The PgLargeObject class provides methods for accessing the PostgreSQL Large
+Object (LO) system.  It allows access to the LO using Python's File Object
+semantics. The PgLargeObject class defines the following public, read-only
+attributes:
+
+    :mode:   The mode used to open the LO
+    :name:   A string, in the form of "<...>", indicating the source of the LO.
+    :closed: Flag: 1 = the LO is closed.
+
+and the following public, read-write attribute:
+
+    :softspace: Boolean that indicates whether a space character needs to be
+                printed before another value when using the 'print' statement.
+
+The following methods are provided:
+
+    :close:      Close the LO.  A closed LO can not be read or written anymore.
+    :flush:      Flush the internal buffer.
+    :open:       Open the LO.  A LO can be opened for reading, writing, or both.
+    :isatty:     Always returns 0.  A LO is never attached to a TTY like device.
+    :fileno:     Returns the integer 'file descriptor' used by the underlining
+                 implementation to request I/O operations.
+    :read:       Read bytes from the LO.
+    :readline:   Read one entire line from the LO.
+    :readlines:  Read entire lines from the LO until EOF.
+    :seek:       Set the LO's current position, like stdio's fseek().
+    :tell:       Returns the LO's current position, like stdio's ftell().
+    :write:      Write bytes to the LO.
+    :writelines: Write a list of strings to the LO.
+    :export:     Export a LO to a file.
+
+Since the PgLargeObject follows Python's File Object semantics, refer to the
+documentation for File Objects for details on using PgLargeObject.  There are
+a few differences, which will be detailed here.
+
+2.1.4.3.1 open
+--------------
+
+*Syntax*:
+    lo.open(mode)
+
+*Description*:
+    Opens a PostgreSQL Large Object for reading, writing, or both.
+    The 'mode' parameter can be either an integer consisting of a
+    combination of the INV_READ and INV_WRITE mode bits, or a
+    string containing 'r' for reading, or 'w' for writing.  The LO
+    can be open for updating by using 'r+' or 'w+'.  A 'b' can be
+    included in the mode string to indicate opening the LO for binary data,
+    but is not really needed since PostgreSQL does not differentiate
+    between binary and non-binary data.
+
+    :NOTE:  'w+' will NOT truncate the large object.
+
+*Note*:
+    Open is a built-in function of Python, not a method of the File
+    Object.  If there is not transaction started on the associated
+    PgConnection object when open is called, one is started.  This
+    will only occur for un-pickled large objects and large objects
+    created with the PgLargeObject method of libpq (and PgSQL).
+
+2.1.4.3.2 close
+---------------
+
+*Syntax*:
+    lo.close()
+
+*Description*:
+    This method will close an open large object.
+
+*Note*:
+    If the large object was the result of un-pickling a large
+    object or it was created with the PgLargeObject method of
+    libpq (or PgSQL), close() will commit the transaction started
+    by open().  If a rollback is desired, then pass close a single
+    argument of the integer 1.  This argument is only valid if the
+    large object was the result of un-pickling a large object or
+    created with the PgLargeObject method.
+
+2.1.4.3.3 export
+----------------
+
+*Syntax*:
+    i = lo.export(filename)
+
+*Returns*:
+    1 if successful, 0 if an OS error occurred, < 0 if a database
+    error occurred.
+
+*Description*:
+    This method will export the PostgreSQL large object to the
+    specified UNIX filename.
+
+*Note*:
+    The file is stored on the database server, not the client machine (if
+    different from the server).
+
+2.1.4.4 The PgNotify Object
+---------------------------
+
+The PgNotify object encapsulates the data returned by the notifies method of
+the PgConnection class.  It provides the following read-only attributes:
+
+    :relname:  The name of the relation containing data.
+    :be_pid:   The process ID of the PostgreSQL backend sending the
+               notification.
+
+2.1.4.5 The PgVersion Object
+----------------------------
+
+The PgVersion object encapsulates information about the version of PostgreSQL
+that a connection object is connected to.  It provides the following read-only
+attribute:
+
+    :major:     The major version number.
+    :minor:     The minor version number.
+    :level:     The patch level.
+    :post70:    A flag that is true if the version is >= 7.1.0.
+
+You can obtain the result of the 'SELECT version()' used to initialize this
+object using the str() or repr() function.
+
+For example, for version 6.5.3, the contents of the PgVersion object would be:
+
+    ::
+
+        connection.version        == "PostgreSQL 6.5.3 on <system dependent info>"
+        connection.version.major  == 6
+        connection.version.minor  == 5
+        connection.version.level  == 3
+        connection.version.post70 == 0
+
+For example, for version 7.1.1, the contents of PgVer would be:
+
+    ::
+
+	connection.version        == "PostgreSQL 7.1.1 on <system dependent info>"
+	connection.version.major  == 7
+	connection.version.minor  == 1
+	connection.version.level  == 1
+	connection.version.post70 == 1
+
+Also, you can use the PgVersion object to compare against a number or string
+form of the version.  The form used for numeric comparison is "Mmmll", where
+"M" is the major number, "mm" is the minor number, and "ll" is the patch level.
+An example:
+
+    Assume that the PostgreSQL version is 7.0.2, then:
+
+        ::
+
+	    connection.version == 70002 will be true.
+	    connection.version < 70001L will be false.
+	    connection.version > 70001.0 will be true.
+
+You can also compare against a string as follows:
+
+    Assume that the PostgreSQL version is 7.1.2, then:
+
+        ::
+
+	    connection.version == "7.0.2" will be false.
+	    connection.version < "7.0.1" will be false.
+	    connection.version > "7.1" will be true.
+
+:NOTE:  Both the libpq and PgSQL connection objects have the version attribute.
+
+:NOTE:  Comparisons against strings (i.e. "7.0.1") does not work in
+	Python 2.0.
+
+2.2 The PgSQL module
+--------------------
+
+The PgSQL module provide a Python DB-API 2.0 compliant module on top of the
+libpq module.  As the DB-API 2.0 interface is documented elsewhere
+(http://www.python.org/topics/database/DatabaseAPI-2.0.html), I will only
+describe the differences in the PgSQL here.
+
+2.2.1 Importing PgSQL
+---------------------
+
+The module, PgSQL, is part of the pyPgSQL package.  It is imported using
+the following statement:
+
+    >>> from pyPgSQL import PgSQL
+
+2.2.2 Differences at the Module Level
+-------------------------------------
+
+1.  The Binary constructor is a method of the Connection object, not the module.
+    For PostgreSQL, a Large Object can only be created in conjunction with a
+    Connection, it has no meaning outside of the context of a Connection.
+
+2.  The following types are defined to support certain PostgreSQL data types:
+
+    :PgInt2:    Supports the PG_INT2 data type.
+
+    :PgInt8:    Supports the PG_INT8 data type.
+
+    :PgBoolean: Supports the PG_BOOL data type.
+
+3.  The following classes are defined to support certain PostgreSQL data types:
+
+    :PgNumeric: Supports the PG_NUMERIC data type.  It uses a Python Long as
+                the base type and provides the following arithmetic operations:
+                addition, subtraction, multiplication, and division.
+
+    :PgMoney:   Supports the PG_CASH data type.  It uses a Python Float as the
+                base type with range checking to prevent it from exceeding the
+                range of the PG_CASH data type.  Any operation that applies to
+                a Python Float can be used with a PgMoney object.
+
+    :PgBytea:   This class supports the PG_BYTEA data type.  It is a wrapper
+                around a Python String that provides for proper escaping of
+                the string when used in a query.
+
+    :PgOther:   This class supports all the other PostgreSQL data types that
+                do not map directly into a Python object or one of the support
+                classes listed above (such as PG_BOX, PG_POINT, etc.).  As time
+                goes on, more PostgreSQL data types will have support classes
+                defined for them, reducing the number of PostgreSQL data types
+                that fall within this class.
+
+    :PgArray:   This class provide support for PostgreSQL arrays.  It is a
+                wrapper around a Python list that supports all the methods of
+                a list plus adds a __quote__ method for quoting arrays.
+
+4.  The following class is defined:
+
+    :PgVersion: Contains the version number of PostgreSQL database engine that
+                we are connected to.  This information is used to change the
+                behavior of PgSQL based on the version of the PostgreSQL
+                engine.  See the section 2.6 for more details on the
+                PgVersion object.
+
+5.  The following constructors are defined by the PgSQL module.
+
+    :PgBoolean:         Construct a PgBoolean from a Python numeric or string.
+    :PgInt2:            Construct a PgInt2 from a Python numeric or string.
+    :PgInt8:            Construct a PgInt8 from a Python numeric or string.
+    :PgLargeObject:     Construct a PgLargeObject from a PgConnection object and
+                        a OID identifying a PostgreSQL large object.
+
+    These constructors are documented in the libpq section of this document.
+
+6.  The following attribute is defined in the PgSQL module:
+
+        :fetchReturnsList: controls the type of result returns by the fetchXXX
+                           methods.
+
+    Setting this attribute to 1 will cause the fetchXXX methods to return a
+    list instead of a PgResultSet.  This will provide better performance by
+    sacrificing the convenient access methods provide by a PgResultSet.
+
+    The default value for fetchReturnsList is 0.
+
+2.2.3 Differences in the Connection Object
+------------------------------------------
+
+1.  The Connection object has an additional read-only attribute called notices.
+    This attribute is a list of notices returned by the pq library.
+
+    :NOTE:  Under normal usage, certain (but not all) notices received from
+	    the libpq C-API library are converted into Warning exceptions.
+
+2.  The Connection object has an additional read-only attribute called version.
+    This attribute contains a PgVersion object encapsulating the version
+    information of the PostgreSQL backend that the Connection object is
+    connected to.
+
+3.  The Binary constructor method is a Connection method, not a PgSQL module
+    function.
+
+4.  A unlink method is available in the Connection object to remove a Large
+    Object from the database.
+
+5.  A PgSQL specific Connection attribute, called TransactionLevel, specifies
+    the isolation level to use within a transaction.  It can be set to "",
+    "READ COMMITED", or "SERIALIZABLE".  PgSQL will issue the appropriate "SET
+    TRANSACTION LEVEL" statement whenever a new transaction is started for
+    the connection.
+
+    :NOTE:  The value of this attribute can not be changed if there are any
+	    active cursors for the connection.
+
+2.2.3.1 unlink
+--------------
+
+*Syntax*:
+    c.unlink(PgLargeObject)
+
+*Description*:
+    Removes the PostgreSQL large object identified from the
+    database.
+
+*Exceptions*:
+    InterfaceError, IOError, TypeError
+
+2.2.4 Differences in the Cursor Object
+--------------------------------------
+
+1.  The description attribute is a sequence of 8-item sequences.  The first
+    seven items are the same as described in the DB-API 2.0 documentation.
+    The 8th item is the 'isArray' flag.  If this is 1, then the associated
+    result column is a PostgreSQL array.
+
+2.  The callproc method will always return None.  PostgreSQL does not have
+    stored procedures in the same sense as other databases such as Oracle.
+    There are no 'Input', 'Output', or 'Input/Output' parameters.  In PgSQL,
+    this method is used to call PostgreSQL functions, which only return a
+    result set (or nothing).
+
+    :NOTE:  Beginning with PostgreSQL 7.2, it is possible to return a
+	    reference to a cursor from PL/pgSQL.  PgSQL will create a new
+	    Cursor object for the referenced cursor that is returned.
+
+3.  When using the execute method, you should only use '%s' [or '%(name)s']
+    (without the quote marks) to specify locations where the parameters are to
+    be substituted, even for integers, floats and other non-string variables.
+    The execute method will convert all the parameters to a string, applying any
+    quoting that may be necessary before sending the query to the back-end.
+
+4.  The fetchone method will return a PgResultSet object instead of a sequence.
+    A PgResultSet emulates a Python List object (for DB-API 2.0 compliance),
+    but also acts as a dictionary and allows the column data to be retrieved by
+    using the column name as an attribute of the PgResultSet object. The column
+    names are case-insensitive.
+
+    :NOTE:  This feature is controlled by the fetchReturnsList attribute of
+	    the PgSQL module.
+
+5.  The fetchmany and fetchall methods return a sequence of PgResultSet objects
+    instead of a sequence of sequences.
+
+    :NOTE:  This feature is controlled by the fetchReturnsList attribute of
+	    the PgSQL module.
+
+6.  A PostgreSQL specific attribute, named oidValue, was added to the cursor
+    object.  This attribute returns the value of the oidValue attribute of the
+    PgResult object associated with the cursor object and provides a convenient
+    way to get the object ID of a newly inserted record.
+
+2.2.5 Unicode support
+---------------------
+
+pyPgSQL has a few extensions that make it possible to insert Unicode strings
+into PostgreSQL and fetch unicode strings instead of byte strings from the
+database.
+
+The module-level connect() function has two Unicode-related parameters:
+
+- client_encoding
+- unicode_results
+
+*client_encoding* accepts the same parameters as the encode method
+of Unicode strings. If you also want to set a policy for encoding
+errors, set client_encoding to a tuple, like ("koi8-r", "replace")
+
+Note that you still must make sure that the PostgreSQL client is
+using the same encoding as set with the client_encoding parameter.
+This is typically done by issuing a "SET CLIENT_ENCODING TO ..."
+SQL statement immediately after creating the connection.
+
+If you also want to fetch Unicode strings from the database, set
+*unicode_results* to 1.
+
+For example, assuming a database created with *createdb mydb -E UNICODE* and a
+table *TEST(V VARCHAR(50))*:
+
+    >>> from pyPgSQL import PgSQL
+    >>> cx = PgSQL.connect(database="mydb", client_encoding="utf-8", unicode_results=1)
+    >>> cu = cx.cursor()
+    >>> cu.execute("set client_encoding to unicode")
+    >>> cu.execute("insert into test(v) values (%s)", (u'\x99sterreich',))
+    >>> cu.execute("select v from test")
+    >>> cu.fetchone()
+    [u'\x99sterreich']
+    >>>
+
+==================================
+3.0 General Notes and Observations
+==================================
+
+The PostgreSQL database system has no auto-commit setting.  It is always in
+auto-commit mode unless a transaction is started.  To achieve the DB-API 2.0
+mandated behaviour, when connection.autocommit is 0, a transaction is
+started when the first cursor is created for a connection.  After a commit
+or rollback, a new transaction is created on the next call to execute().
+
+----------------------------------------------------------------------------
+
+PostgreSQL arrays are no longer (directly) represented by Python lists.
+This means that lists and tuples are not longer treated specially by
+Cursor.execute().  This resolves a problem of using the IN SQL syntax with
+Cursor.execute().  For example, the following statement will now work:
+
+    >>> Cursor.execute('select * from table where column1 in %s', ((1, 3, 4),))
+
+It will generate the following SQL statement:
+
+    select * from table where column1 in (1, 3, 4)
+
+It also means that to insert an PostgreSQL array, you must pass a PgArray
+instance to Cursor.execute().  For example, if you have a list that you want
+to insert into a table as a PostgreSQL array, you would use:
+
+    >>> cursor.execute('insert in sometable values (%s)', PgArray(yourlist))
+
+You can also build a PostgreSQL array by creating an empty PgArray instance
+and populating it using the various list methods (.append(), .insert(), etc.).
+
+----------------------------------------------------------------------------
+
+When working with PostgreSQL large object, you MUST be in a transaction.
+The code will try to ensure that a transaction is active while working with
+large object (i.e. lo_open will start a transaction if necessary.)
+
+----------------------------------------------------------------------------
+
+There is a change to the Connection.binary() function that *could* cause
+existing code to break.  Connection.binary() no longer commits the trans-
+action used to create the large object.  The application developer is now
+responsible for commiting (or rolling back) the transaction.
+
+----------------------------------------------------------------------------
+
+Beginning with PostgreSQL 7.2, you can now create a cursor in PL/pgSQL and 
+return a reference to that cursor.  PgSQL will transform the reference to
+the created cursor into a Cursor object that can be used to fetch the
+results of the cursor.  For example (assuming that mmYearInfo returns a
+reference cursor):
+
+    >>> from pyPgSQL import PgSQL
+    >>> cx = PgSQL.connect(database='esi')
+    >>> cu = cx.cursor()
+    >>> cu.callproc('mmYearInfo')
+    >>> rs = cu.fetchone()
+    >>> rs
+    [<pyPgSQL.PgSQL.Cursor instance at 0x818495c>]
+    >>> c = rs[0]
+    >>> for i in c.description:
+    ...     print i
+    ... 
+    ['model_year', varchar, 4, 8, None, None, None, 0]
+    ['mktg_div_name', varchar, 50, 54, None, None, None, 0]
+    ['model_desc', varchar, 50, 54, None, None, None, 0]
+    ['book_types', varchar, 50, 54, None, None, None, 0]
+    ['vehicle_syskey', integer, 4, 4, None, None, None, 0]
+    >>> r = c.fetchone()
+    >>> r
+    ['2003', 'Buick', 'Century', '1;8;9', 2211]
+    >>> 
+

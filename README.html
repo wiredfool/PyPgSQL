@@ -1,0 +1,1906 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="Docutils: http://docutils.sourceforge.net/">
+<link rel="stylesheet" href="default.css" type="text/css" />
+<meta name="version" content="#ident &quot;@(#) $Id: README.html,v 1.2 2004/07/31 20:26:25 ballie01 Exp $&quot;" />
+</head>
+<body>
+<div class="document">
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><td class="docinfo-name">Version:&nbsp;</td><td>
+#ident &quot;@(#) $Id: README.html,v 1.2 2004/07/31 20:26:25 ballie01 Exp $&quot;</td></tr>
+</tbody>
+</table>
+<div class="section" id="pypgsql-v2-3-python-db-api-2-0-compliant-interface-module-for-postgresql" name="pypgsql-v2-3-python-db-api-2-0-compliant-interface-module-for-postgresql">
+<h1>pyPgSQL - v2.3: Python DB-API 2.0 Compliant Interface Module for PostgreSQL.</h1>
+<div class="section" id="copyright-notice-and-license" name="copyright-notice-and-license">
+<h2>0. Copyright notice and License</h2>
+<blockquote>
+<p>pyPgSQL, version 2.3
+A Python DB-API 2.0 compliant interface for PostgreSQL
+Copyright 2000 by Billy G. Allie.
+All rights reserved.</p>
+<p>Permission to use, copy, modify, and distribute this software and it's
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the copyright owner's name not be
+used in advertising or publicity pertaining to distribution of the
+software without specific, written prior permission.</p>
+<p>THE AUTHOR(S) DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.</p>
+</blockquote>
+</div>
+<div class="section" id="about-pypgsql" name="about-pypgsql">
+<h2>1.  About pyPgSQL</h2>
+<div class="section" id="introduction" name="introduction">
+<h3>1.1 Introduction</h3>
+<p>PostgreSQL is a sophisticated Object-Relational DBMS, supporting almost all SQL
+constructs, including sub-selects, transactions, and user-defined types and
+functions. It is the most advanced open-source database available anywhere More
+information about PostgreSQL can be found at the PostgreSQL home page at
+<a class="reference" href="http://www.postgresql.org">http://www.postgresql.org</a>.</p>
+<p>Python is an interpreted, interactive, object-oriented programming language.
+It combines remarkable power with very clear syntax.  It has modules, classes,
+exceptions, very high level dynamic data types, and dynamic typing.  There are
+interfaces to many system calls and libraries, as well as to various windowing
+systems (X11, Motif, Tk, Mac, MFC).  New builtin modules are easily written in
+C or C++.  Python is also usable as an extension language for applications that
+need a programmable interface.  Python is copyrighted but freely usable and
+distributable, even for commercial use.  More information about Python can be
+found on the Python home page at <a class="reference" href="http://www.python.org">http://www.python.org</a>.</p>
+<p>pyPgSQL is a package of two (2) modules that provide a Python DB-API 2.0
+compliant interface to PostgreSQL databases.  The first module, libpq,
+exports the PostgreSQL C API to Python.  This module is written in C and
+can be compiled into Python or can be dynamically loaded on demand.  The
+second module, PgSQL, provides the DB-API 2.0 compliant interface and
+support for various PostgreSQL data types, such as INT8, NUMERIC, MONEY,
+BOOL, ARRAYS, etc.  This module is written in Python.  This version works
+with PostgreSQL 7.0 or later and Python 2.0 or later.</p>
+<p>pyPgSQL was originally developed on a UnixWare 7.1.1 system, but is nowadays
+also developed on FreeBSD and various Windows and Linux flavours.</p>
+</div>
+<div class="section" id="distribution-files" name="distribution-files">
+<h3>1.2 Distribution Files</h3>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">README:&nbsp;</td><td class="field-body">This file.</td>
+</tr>
+<tr class="field"><td class="field-name">Announce:&nbsp;</td><td class="field-body">Announcement of this release.</td>
+</tr>
+<tr class="field"><td class="field-name">ChangeLog:&nbsp;</td><td class="field-body">changes to this package during it's history.</td>
+</tr>
+<tr class="field"><td class="field-name">libpqmodule.c:&nbsp;</td><td class="field-body">the C code implementing the libqp module.</td>
+</tr>
+<tr class="field"><td class="field-name">pgboolean.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PostgreSQL BOOL
+type object for Python.</td>
+</tr>
+<tr class="field"><td class="field-name">pgconnection.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PgConnection
+class.</td>
+</tr>
+<tr class="field"><td class="field-name">pgint2object.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PostgreSQL INT2
+type object for Python.</td>
+</tr>
+<tr class="field"><td class="field-name">pgint8object.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PostgreSQL INT8
+type object for Python.</td>
+</tr>
+<tr class="field"><td class="field-name">pglargeobject.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PgLargeObject
+class.</td>
+</tr>
+<tr class="field"><td class="field-name">pgnotify.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PgNotify class.</td>
+</tr>
+<tr class="field"><td class="field-name">pgresult.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PgResult class.</td>
+</tr>
+<tr class="field"><td class="field-name">pgversion.[ch]:&nbsp;</td><td class="field-body">the C code implementing the PgVersion
+class.</td>
+</tr>
+<tr class="field"><td class="field-name">pymemstrdup.c:&nbsp;</td><td class="field-body">the C code implementing a version of strdup()
+that uses Python's heap for the needed memory.</td>
+</tr>
+<tr class="field"><td class="field-name">pyPgSQL/__init__.py:&nbsp;</td><td class="field-body">the initialization code for the pyPgSQL
+package.</td>
+</tr>
+<tr class="field"><td class="field-name">pyPgSQL/PgSQL.py:&nbsp;</td><td class="field-body">the module that implements the Python DB-API 2.0
+compliant interface to PostgreSQL</td>
+</tr>
+<tr class="field"><td class="field-name">pyPgSQL/libpq:&nbsp;</td><td class="field-body">the package for the libpq module.</td>
+</tr>
+<tr class="field"><td class="field-name">pyPgSQL/libpq/__init__.py:&nbsp;</td><td class="field-body">the initialization code for the libpq
+package.</td>
+</tr>
+<tr class="field"><td class="field-name">setup.py:&nbsp;</td><td class="field-body">Distutil setup file for building and installing
+pyPgSQL</td>
+</tr>
+<tr class="field"><td class="field-name">port/*:&nbsp;</td><td class="field-body">String functions imported from the FreeBSD
+source tree and given a pg prefix.</td>
+</tr>
+<tr class="field"><td class="field-name">test/PgSQLTestCases.py:&nbsp;</td><td class="field-body">A set of functional test cases built using
+the Python Unit Testing Framework (PyUnit)</td>
+</tr>
+<tr class="field"><td class="field-name">test/regression/*:&nbsp;</td><td class="field-body">Test cases to test specific sections of
+pyPgSQL.</td>
+</tr>
+<tr class="field"><td class="field-name">examples/*:&nbsp;</td><td class="field-body">Some example programs using libpq and PgSQL</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="installation" name="installation">
+<h3>1.3 Installation</h3>
+<p>These instructions assume you have Python 2.0 (or later) and at least
+PostgreSQL 7.0 (7.2 or later recommended) installed on your system.  If you are
+going to use the DB-API 2.0 compliant module, you must also install the
+mxDateTime module from <a class="reference" href="http://starship.python.net/~lemburg/mxDateTime.html">http://starship.python.net/~lemburg/mxDateTime.html</a>.</p>
+<ol class="loweralpha simple">
+<li>Download pyPgSQL files if you haven't already done so.</li>
+<li>Edit the setup.py file to reflect the your environment.  The setup.py file
+contains comments regarding USE_CUSTOM to guide you in customizing this
+file.</li>
+<li>Execute <tt class="literal">python setup.py build</tt> to build the extension module.</li>
+<li>Execute <tt class="literal">python setup.py install</tt> to install the extension module.</li>
+</ol>
+<p>(On many platforms, you can skip step b. as the necessary paths are
+automatically detected.)</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">You may require root access to install the module.
+Consult your local system administrator.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing-the-pgsql-module" name="testing-the-pgsql-module">
+<h3>1.4 Testing the PgSQL module.</h3>
+<p>To run the tests, enter the following command from the PgSQL source
+directory:</p>
+<blockquote>
+<tt class="literal">python test/PgSQLTestCases.py</tt></blockquote>
+<p>If the test cases run without any failures, then you can be reasonably sure
+that the module built correctly.</p>
+<p>There are additional test cases in test/regression that you can run. These
+require that an empty database <em>pypgsql</em> exists locally with <em>UNICODE</em>
+encoding and with the ability to execute PL/pgsql functions. You can create
+such a database with the following commands:</p>
+<pre class="literal-block">createdb -E UNICODE pypgsql
+createlang plpgsql pypgsql</pre>
+</div>
+<div class="section" id="additional-information-about" name="additional-information-about">
+<h3>1.5 Additional information about ...</h3>
+<p>Additional information about the different packages is available at:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">Python:&nbsp;</td><td class="field-body"><a class="reference" href="http://www.python.org">http://www.python.org</a></td>
+</tr>
+<tr class="field"><td class="field-name">PostgreSQL:&nbsp;</td><td class="field-body"><a class="reference" href="http://www.PostgreSQL.org">http://www.PostgreSQL.org</a></td>
+</tr>
+<tr class="field"><td class="field-name">mxDateTime:&nbsp;</td><td class="field-body"><a class="reference" href="http://starship.python.net/~lemburg/mxDateTime.html">http://starship.python.net/~lemburg/mxDateTime.html</a></td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+</div>
+<div class="section" id="programming-information" name="programming-information">
+<h2>2.  Programming Information</h2>
+<div class="section" id="the-libpq-module" name="the-libpq-module">
+<h3>2.1 The libpq module</h3>
+</div>
+<div class="section" id="importing-libpq" name="importing-libpq">
+<h3>2.1.1 Importing libpq</h3>
+<p>The module, libpq, is part of the pyPgSQL package.  It is imported using
+the following statement:</p>
+<blockquote>
+<pre class="doctest-block">&gt;&gt;&gt; from pyPgSQL import libpq</pre>
+</blockquote>
+</div>
+<div class="section" id="libpq-constants" name="libpq-constants">
+<h3>2.1.2 libpq Constants</h3>
+<p>There are a number of constants defined in libpq.  They are intended to be
+used as parameters for method calls and to compare against certain results
+generated by method calls.  You should refer to the libpq section of the
+PostgreSQL programmer's manual for information about them.  These constants
+are:</p>
+<blockquote>
+<p>Connection related constants:</p>
+<blockquote>
+CONNECTION_OK, CONNECTION_BAD, POLLING_FAILED, POLLING_READING,
+POLLING_WRITING, POLLING_OK, POLLING_ACTIVE</blockquote>
+<p>Query related constants:</p>
+<blockquote>
+EMPTY_QUERY, COMMAND_OK, TUPLES_OK, COPY_OUT, COPY_IN,
+BAD_RESPONSE, NONFATAL_ERROR, FATAL_ERROR</blockquote>
+<p>Large Object related constants:</p>
+<blockquote>
+INV_SEEK_SET, INV_SEEK_CUR, INV_SEEK_END, INV_READ, INV_WRITE</blockquote>
+<p>Constants for PostgreSQL type (OID) identifiers:</p>
+<blockquote>
+<p>Character String Types:</p>
+<blockquote>
+PG_TEXT, PG_CHAR, PG_VARCHAR, PG_NAME, PG_BPCHAR</blockquote>
+<p>Number Types:</p>
+<blockquote>
+PG_INT4, PG_INT2, PG_INT8, PG_OID, PG_NUMERIC, PG_FLOAT8,
+PG_FLOAT4, PG_MONEY (aka PG_CASH)</blockquote>
+<p>Temporal Types:</p>
+<blockquote>
+PG_DATE, PG_TIME, PG_TIMESTAMP, PG_TIMESTAMPTX, PG_INTERVAL,
+PG_ABSTIME, PG_RELTIME, PG_TINTERVAL</blockquote>
+<p>Logical (boolean) Type:</p>
+<blockquote>
+PG_BOOL</blockquote>
+<p>Geometric Types:</p>
+<blockquote>
+PG_POINT, PG_LSEG, PG_PATH, PG_BOX, PG_LINE, PG_CIRCLE,
+PG_POLYGON</blockquote>
+<p>Network Types:</p>
+<blockquote>
+PG_INET, PG_CIDR</blockquote>
+<p>Misc. Types:</p>
+<blockquote>
+PG_REFCURSOR</blockquote>
+</blockquote>
+</blockquote>
+<p>The following constants are defined for use by the libpq module and have no
+direct relationship to constants in PostgreSQL's C API:</p>
+<blockquote>
+<p>PgResult related constants:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">RESULT_DDL:&nbsp;</td><td class="field-body">result was generated by a DDL query.</td>
+</tr>
+<tr class="field"><td class="field-name">RESULT_DQL:&nbsp;</td><td class="field-body">result was generated by a DQL query.</td>
+</tr>
+<tr class="field"><td class="field-name">RESULT_DML:&nbsp;</td><td class="field-body">result was generated by a DML query.</td>
+</tr>
+<tr class="field"><td class="field-name">RESULT_EMPTY:&nbsp;</td><td class="field-body">query generated an empty result.</td>
+</tr>
+<tr class="field"><td class="field-name">RESULT_ERROR:&nbsp;</td><td class="field-body">query generated an error.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>PgBoolean constants:</p>
+<blockquote>
+PG_True, PG_False</blockquote>
+</blockquote>
+</div>
+<div class="section" id="libpq-methods" name="libpq-methods">
+<h3>2.1.3 libpq Methods</h3>
+<p>The following methods are defined by libpq:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PQconnectdb:&nbsp;</td><td class="field-body">preferred method to connect to a database.</td>
+</tr>
+<tr class="field"><td class="field-name">PQconndefaults:&nbsp;</td><td class="field-body">returns a list containing the connection
+defaults.</td>
+</tr>
+<tr class="field"><td class="field-name">PQresStatus:&nbsp;</td><td class="field-body">returns a string representation of the result
+status.</td>
+</tr>
+<tr class="field"><td class="field-name">PQresType:&nbsp;</td><td class="field-body">returns a string representation of the result
+type.</td>
+</tr>
+<tr class="field"><td class="field-name">PQftypeName:&nbsp;</td><td class="field-body">returns a string name for a PostgreSQL type
+(oid).</td>
+</tr>
+<tr class="field"><td class="field-name">PgBoolean:&nbsp;</td><td class="field-body">creates a PgBoolean object from a string or
+number.</td>
+</tr>
+<tr class="field"><td class="field-name">PgBooleanFromString:&nbsp;</td><td class="field-body">Deprecated, use PgBoolean().</td>
+</tr>
+<tr class="field"><td class="field-name">PgBooleanFromInteger:&nbsp;</td><td class="field-body">Deprecated, use PgBoolean().</td>
+</tr>
+<tr class="field"><td class="field-name">PgInt2:&nbsp;</td><td class="field-body">creates a PgInt2 object from a string or
+number.</td>
+</tr>
+<tr class="field"><td class="field-name">PgInt8:&nbsp;</td><td class="field-body">creates a PgInt8 object from a string or
+number.</td>
+</tr>
+<tr class="field"><td class="field-name">PgLargeObject:&nbsp;</td><td class="field-body">creates a PgLargeObject from a connection and
+OID.</td>
+</tr>
+<tr class="field"><td class="field-name">PgVersion:&nbsp;</td><td class="field-body">creates a PgVersion object from a string.</td>
+</tr>
+<tr class="field"><td class="field-name">PgQuoteString:&nbsp;</td><td class="field-body">Quotes a string, escaping any characters as
+needed, for use as input to a character/text
+field.</td>
+</tr>
+<tr class="field"><td class="field-name">PgQuoteBytea:&nbsp;</td><td class="field-body">Escapes a string, which can contain NUL
+characters, so that it can used as an input to
+a bytea field.</td>
+</tr>
+<tr class="field"><td class="field-name">PgUnQuoteBytea:&nbsp;</td><td class="field-body">Reverses the action of PgQuoteBytea().</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="pqconnectdb" name="pqconnectdb">
+<h3>2.1.3.1 PQconnectdb</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd><p class="first">c = PQconnectdb(conninfo)</p>
+<p>Where conninfo is a string containing connection information.</p>
+</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgConnection object.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Implements the PostgreSQL C API's PQconnectdb function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>DatabaseError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="pqconndefaults" name="pqconndefaults">
+<h3>2.1.3.2 PQconndefaults</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>l = PQconndefaults()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A list of default connection options.  A default connection options is
+a list containing [keyword, envvar, compiled, val, label, dispchar,
+dispsize].</dd>
+<dt><em>Description</em>:</dt>
+<dd>Implements the PostgreSQL C API's PQconndefaults function.</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="pqresstatus" name="pqresstatus">
+<h3>2.1.3.3 PQresStatus</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PQresStatus(status)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A string representation of the result status code, 'status'.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Implements the PostgreSQL C API's PQresStatus function.</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="pqrestype" name="pqrestype">
+<h3>2.1.3.4 PQresType</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PQresType(type)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A string representation of the result type, 'type'.</dd>
+<dt><em>Description</em>:</dt>
+<dd>The result type is generated by the libpq module (not by the PostgreSQL
+C API library) and describes the result type (DDL, DQL, DML, EMPTY, or
+ERROR).</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A string representation of the result type code, 'type'.</dd>
+</dl>
+</div>
+<div class="section" id="pqftypename" name="pqftypename">
+<h3>2.1.3.5 PQftypeName</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PQftypeName(type)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A string representation of the PostgreSQL type, 'type'.</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method returns a string representation of the PostgreSQL type,
+'type'.  This string is useful for displaying the type code.  This
+method has no corresponding PostgreSQL C API function.</dd>
+</dl>
+</div>
+<div class="section" id="pgboolean" name="pgboolean">
+<h3>2.1.3.6 PgBoolean</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>b = PgBoolean(object)</dd>
+<dt><em>Description</em>:</dt>
+<dd><p class="first">This method returns a PgBoolean object initialized from the
+value of object.  It recognizes the following string values:</p>
+<blockquote>
+For true.: '1', 'T', 'TRUE', 'Y', 'YES', 'ON'
+For false: '0', 'F', 'FALSE', 'N', 'NO', 'OFF'</blockquote>
+<p>For numeric object, zero is false, non-zero is true.</p>
+</dd>
+<dt><em>Returns</em>:</dt>
+<dd>PG_True or PG_False based on the value of 'object'</dd>
+</dl>
+</div>
+<div class="section" id="pgint2" name="pgint2">
+<h3>2.1.3.7 PgInt2</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>n = PgInt2(object)</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method returns a PgInt2 object initialized from the value of the
+string or numeric 'object'.  The PgInt2 type uses a 2-byte integer to
+store it's value.</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgInt2 object initialized with the value of 'object'.</dd>
+</dl>
+</div>
+<div class="section" id="pgint8" name="pgint8">
+<h3>2.1.3.8 PgInt8</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>n = PgInt8(object)</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method returns a PgInt8 object initialized from the value of the
+string or numeric 'object'.  The PgInt8 type uses a 8-byte integer to
+store it's value.</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgInt8 object initialized with the value of 'object'.</dd>
+</dl>
+</div>
+<div class="section" id="pglargeobject" name="pglargeobject">
+<h3>2.1.3.9 PgLargeObject</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>o = PgLargeObject(PgConnection, OID)</dd>
+<dt><em>Description</em>:</dt>
+<dd>This function will create a PgLargeObject object given a PgConnection
+object and a PostgreSQL large object identifier (OID).</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A closed PgLargeObject object.</dd>
+<dt><em>Note</em>:</dt>
+<dd>A PgLargeObject can not be opened outside the context of a transaction.
+Because of this, large objects created with this method (and by
+inference, un-pickled large objects) will begin a transaction (if
+needed) in it's associated PgConnection object when the the large
+object is opened.  When the large object is closed, the transaction
+will be committed.  If a rollback is desired, pass close() an argument
+of 1.</dd>
+</dl>
+</div>
+<div class="section" id="pgquotestring" name="pgquotestring">
+<h3>2.1.3.10 PgQuoteString</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PgQuoteString(string, forArray)</dd>
+<dt><em>Description</em>:</dt>
+<dd><p class="first">This function returns a copy of the input string with the
+following characters escaped:</p>
+<pre class="literal-block">1.  The backslash character (as '\\')
+2.  The single quote (as &quot;\'&quot;)
+3.  The &lt;CR&gt; character (as '\r')
+4.  The &lt;NL&gt; character (as '\n')
+5.  The &lt;BS&gt; character (as '\b')
+6.  The &lt;FF&gt; character (as '\f')
+7.  The &lt;TAB&gt; character (as '\t')
+8.  All other control characters as '\OOO' where OOO is
+    the octal representation of the character's ordinal
+    number.
+The string is also quoted with single quotes.
+
+If forArray is one (1), the escaping is changed  as follows:
+    1.  The backslash character (as '\\\\')
+    (2 through 7 remain the same)
+    8.  All other control characters as '\\\\000'
+    9.  The double quote (as '\&quot;')
+The string is also quoted with double quotes, instead of single
+quotes.</pre>
+</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A quoted, escaped copy of the input string.</dd>
+</dl>
+</div>
+<div class="section" id="pgquotebytea" name="pgquotebytea">
+<h3>2.1.3.11 PgQuoteBytea</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PgQuoteBytea(string)</dd>
+<dt><em>Description</em>:</dt>
+<dd><p class="first">This function returns a copy of the input string with characters
+escaped as follows:</p>
+<pre class="literal-block">1.  &lt;NUL&gt; characters: '\\000' (Note: with 2 backslashes)
+2.  Non-printable characters: '\OOO' (Note OOO is the octal
+    representation of the characters ordinal number)
+3.  Backslashes: '\\\\' (Note: with 4 backslashes)
+4.  Single quote: &quot;\'&quot;
+The string is also quoted with single quotes.
+
+
+If forArray is one (1), the escaping is changed  as follows:
+    1.  &lt;NUL&gt; characters: '\\\\000' (Note: with 4 backslashes)
+    2.  Non-printable characters: '\\\\OOO'
+    3.  Backslashes: '\\\\\\\\' (Note: with 8 backslashes)
+    4.  Single quote: &quot;\'&quot;
+    5.  The double quote (as '\\&quot;')
+The string is also quoted with double quotes, instead of single
+quotes.</pre>
+</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A quoted, escaped copy of the input string.</dd>
+</dl>
+</div>
+<div class="section" id="pgunquotebytea" name="pgunquotebytea">
+<h3>2.1.3.12 PgUnQuoteBytea</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = PgUnQuoteBytea(string)</dd>
+<dt><em>Description</em>:</dt>
+<dd>This function un-escapes a string retrieved from a bytea field.</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A copy of the input string with any escaped character returned
+to their original value.</dd>
+</dl>
+</div>
+<div class="section" id="libpq-classes" name="libpq-classes">
+<h3>2.1.4 libpq Classes</h3>
+<p>This module defines the following five (5) classes:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PgConnection:&nbsp;</td><td class="field-body">the connection class.  It handles the connection and all
+requests to the database.</td>
+</tr>
+<tr class="field"><td class="field-name">PgResult:&nbsp;</td><td class="field-body">handles the query results.</td>
+</tr>
+<tr class="field"><td class="field-name">PgLargeObject:&nbsp;</td><td class="field-body">handles the access to PostgreSQL large objects.</td>
+</tr>
+<tr class="field"><td class="field-name">PgNotify:&nbsp;</td><td class="field-body">the notify class.  It contains information about a
+notification event sent from a PostgreSQL backend process.</td>
+</tr>
+<tr class="field"><td class="field-name">PgVersion:&nbsp;</td><td class="field-body">the version class.  It contains information about the
+version of the PostgreSQL backend that a connection
+object is connected to.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The module makes error information available via the following exception
+objects, in addition to the standard Python exceptions:</p>
+<blockquote>
+Warning, Error, InterfaceError, DatabaseError, OperationalError,
+IntegrityError, InternalError, ProgrammingError, NotSupportedError</blockquote>
+<p>Additional information about these exceptions can be found in the Python
+DB-API 2.0 documentation.</p>
+</div>
+<div class="section" id="the-pgconnection-object" name="the-pgconnection-object">
+<h3>2.1.4.1 The PgConnection Object</h3>
+<p>The PgConnection Object defines a connection to the PostgreSQL database.
+It has the following public, read-only attributes:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">host:&nbsp;</td><td class="field-body">The server host name of the connection.  It returns the
+output of the PQhost PostgreSQL C API function.</td>
+</tr>
+<tr class="field"><td class="field-name">post:&nbsp;</td><td class="field-body">The port used in the connection.  It returns the output of
+the PQport function.</td>
+</tr>
+<tr class="field"><td class="field-name">db:&nbsp;</td><td class="field-body">The database name of the connection.  It returns the output
+of the PQdb function.</td>
+</tr>
+<tr class="field"><td class="field-name">options:&nbsp;</td><td class="field-body">The backend options used in the connection.  It returns the
+output of the PQoptions function.</td>
+</tr>
+<tr class="field"><td class="field-name">tty:&nbsp;</td><td class="field-body">The debug tty of the connection.  It returns the output of
+the PQtty function.</td>
+</tr>
+<tr class="field"><td class="field-name">user:&nbsp;</td><td class="field-body">The user name of the connection.  It returns the output of
+the PQuser function.</td>
+</tr>
+<tr class="field"><td class="field-name">status:&nbsp;</td><td class="field-body">The status of the connection.  It returns the output of the
+PQstatus function.</td>
+</tr>
+<tr class="field"><td class="field-name">errorMessage:&nbsp;</td><td class="field-body">The error message most recently generated by an operation
+on the connection.  It returns the output of the
+PQerrorMeesage function.</td>
+</tr>
+<tr class="field"><td class="field-name">backendPID:&nbsp;</td><td class="field-body">The process ID of the backend handling this connection.  It
+returns the output of the backendPID function.</td>
+</tr>
+<tr class="field"><td class="field-name">isBusy:&nbsp;</td><td class="field-body">Indicates if PQgetResult would block.  Used with
+asynchronous query processing.  It returns the output of
+the PQisBusy function (PostgreSQL 7.0 or later).</td>
+</tr>
+<tr class="field"><td class="field-name">socket:&nbsp;</td><td class="field-body">The file descriptor for the backend connection socket.
+Used with asynchronous query processing.  It returns the
+output of the PQsocket function.</td>
+</tr>
+<tr class="field"><td class="field-name">notices:&nbsp;</td><td class="field-body"><p class="first">A list of notices received by the PostgreSQL C API.  The
+notices are placed in the list so that the list.pop()
+method will retrieve the oldest notice on the list.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">While this attribute is read-only, you can still
+manipulate the list using any of the list's methods
+(pop, append, insert, etc.).  You just can't assign
+a new value to the attribute.</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field"><td class="field-name">version:&nbsp;</td><td class="field-body">version information about the backend that this connection
+object is connected to.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The PgConnection Object has the following methods:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">connectPoll:&nbsp;</td><td class="field-body">Poll the libpq C API for the connection status.</td>
+</tr>
+<tr class="field"><td class="field-name">query:&nbsp;</td><td class="field-body">Execute a query and wait for the results.</td>
+</tr>
+<tr class="field"><td class="field-name">sendQuery:&nbsp;</td><td class="field-body">Send a query to the backend without blocking.</td>
+</tr>
+<tr class="field"><td class="field-name">getResult:&nbsp;</td><td class="field-body">Retrieve the results from the sendQuery method.</td>
+</tr>
+<tr class="field"><td class="field-name">setnonblocking:&nbsp;</td><td class="field-body">Make the connection non-blocking (or blocking).</td>
+</tr>
+<tr class="field"><td class="field-name">consumeInput:&nbsp;</td><td class="field-body">If input is available from the backend, consume it.</td>
+</tr>
+<tr class="field"><td class="field-name">flush:&nbsp;</td><td class="field-body">Attempt to flush any data queued on the backend.</td>
+</tr>
+<tr class="field"><td class="field-name">requestCancel:&nbsp;</td><td class="field-body">Send a cancel query request to the backend.</td>
+</tr>
+<tr class="field"><td class="field-name">finish:&nbsp;</td><td class="field-body">Close the connection and free memory used by the PQconn
+object.</td>
+</tr>
+<tr class="field"><td class="field-name">reset:&nbsp;</td><td class="field-body">Reset the communication port with the backend.</td>
+</tr>
+<tr class="field"><td class="field-name">notifies:&nbsp;</td><td class="field-body">Returns the next notification object (PgNotify) from a list
+of unhandled notification objects.</td>
+</tr>
+<tr class="field"><td class="field-name">getline:&nbsp;</td><td class="field-body">Read a (newline-terminated) line of characters from the
+backend.</td>
+</tr>
+<tr class="field"><td class="field-name">getlineAsync:&nbsp;</td><td class="field-body">Read a line of characters in a non-blocking manner.</td>
+</tr>
+<tr class="field"><td class="field-name">putline:&nbsp;</td><td class="field-body">Send a null-terminated string to the backend.</td>
+</tr>
+<tr class="field"><td class="field-name">endcopy:&nbsp;</td><td class="field-body">Sync with the backend (after a Copy-In/Copy-Out operation).</td>
+</tr>
+<tr class="field"><td class="field-name">lo_creat:&nbsp;</td><td class="field-body">Create a new, empty PgLargeObject.</td>
+</tr>
+<tr class="field"><td class="field-name">lo_import:&nbsp;</td><td class="field-body">Import a file as a PostgreSQL large object, returning a
+PgLargeObject.</td>
+</tr>
+<tr class="field"><td class="field-name">lo_export:&nbsp;</td><td class="field-body">export a PostgreSQL large object to a file.</td>
+</tr>
+<tr class="field"><td class="field-name">lo_unlink:&nbsp;</td><td class="field-body">Removes a PostgreSQL large object from the database.</td>
+</tr>
+<tr class="field"><td class="field-name">trace:&nbsp;</td><td class="field-body">Enable tracing of frontend/backend communications.</td>
+</tr>
+<tr class="field"><td class="field-name">untrace:&nbsp;</td><td class="field-body">Disable tracing start by the trace method.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="connectpoll-postgresql-7-x-and-above" name="connectpoll-postgresql-7-x-and-above">
+<h3>2.1.4.1.1 connectPoll (PostgreSQL 7.x and above)</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = c.connectPoll()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>An integer representing a Postgres Polling Status code.</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method is used to determine the status of a connection started
+with PQconnectStart().  This method implements the PQconnectPoll()
+function and is used for asynchronous query processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="query" name="query">
+<h3>2.1.4.1.2 query</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>r = c.query(string)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgResult object.</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method sends the SQL query, 'string', to the backend and
+waits for the result.  It implement the PostgreSQL C API's
+PQexec function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, ProgrammingError, OperationalError,
+InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="sendquery" name="sendquery">
+<h3>2.1.4.1.3 sendQuery</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.sendQuery(string)</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method send the SQL query, 'string', to the backend without
+waiting for the result.  It implements the PQsendQuery function and is
+used for asynchronous query processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InternalError, InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="getresult" name="getresult">
+<h3>2.1.4.1.4 getResult</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>r = c.getResult()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgResult object.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Wait for and retrieve the results from a previous sendQuery call.  It
+implements the PQgetResult function and is used for asynchronous query
+processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, ProgrammingError, OperationalError,
+InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="setnonblocking-postgresql-7-x-and-above" name="setnonblocking-postgresql-7-x-and-above">
+<h3>2.1.4.1.5 setnonblocking (PostgreSQL 7.x and above)</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.setnonblocking(mode)</dd>
+<dt><em>Description</em>:</dt>
+<dd>Set the connection to non-blocking if 'mode' is non-zero, otherwise set
+it to blocking.  This method implements the PQsetnonblocking()
+function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="consumeinput" name="consumeinput">
+<h3>2.1.4.1.6 consumeInput</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.consumeInput()</dd>
+<dt><em>Description</em>:</dt>
+<dd>If input is available from the backend, consume it.  This method
+implements the PQconsumeInput function and is used with asynchronous
+query processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="flush-postgresql-7-x-and-above" name="flush-postgresql-7-x-and-above">
+<h3>2.1.4.1.7 flush (PostgreSQL 7.x and above)</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.flush()</dd>
+<dt><em>Description</em>:</dt>
+<dd>If input is available from the backend, consume it.  This method
+implements the PQflush function and is used with asynchronous query
+processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="requestcancel" name="requestcancel">
+<h3>2.1.4.1.8 requestCancel</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.requestCancel()</dd>
+<dt><em>Description</em>:</dt>
+<dd>Send a cancel request to the backend.  Note that the successful
+dispatching of the request does not mean the request will be canceled.
+This method implements the PQrequestCancel function and is used with
+asynchronous query processing.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, InternalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="finish" name="finish">
+<h3>2.1.4.1.9 finish</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.finish()</dd>
+<dt><em>Description</em>:</dt>
+<dd>Close the connection to the database and invalidates the PgConnection
+object.  Any attempt to use the PgConnection object after finish is
+called will raise an InterfaceError.  Used by the PQconn object.  The
+database connection is automatically closed when the PgConnection
+object is deleted, so calling finish explicitly is never needed. This
+method implements and extends the PQfinish function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="reset" name="reset">
+<h3>2.1.4.1.10 reset</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.reset()</dd>
+<dt><em>Description</em>:</dt>
+<dd>Close the connection to the backend and attempt to open a new
+connection using the previously used parameters.  This method
+implements the PQreset function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, DatabaseError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="notifies" name="notifies">
+<h3>2.1.4.1.11 notifies</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>n = c.notifies()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgNotify object containing data for the next notification message, or
+None if there are no unhandled notifications.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Retrieves the next notification from a list of unhandled notification
+messages received from the backend.  Once a notification object is
+returned, it is considered handled and will be removed from the list of
+notifications.  This method implements the PQnotifies function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="getline" name="getline">
+<h3>2.1.4.1.12 getline</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = c.getline()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A newline-terminated string read from the backend.</dd>
+<dt><em>Description</em>:</dt>
+<dd>The getline method reads a newline-terminated string (transmitted by
+the backend server) into a (dynamically sized) buffer.  This method
+implements the PQgetline function and is used with the PostgreSQL COPY
+command.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError, MemoryError, InternalError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="getlineasync" name="getlineasync">
+<h3>2.1.4.1.13 getlineAsync</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = c.getlineAsync()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A newline-terminated string read from the backend in a
+non-blocking manner.</dd>
+<dt><em>Description</em>:</dt>
+<dd>The getlineAsync method reads a newline-terminated string (transmitted
+by the backend server) into a (dynamically sized) buffer.  This method
+implements the PQgetline function and is used with the PostgreSQL COPY
+command.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError, MemoryError, InternalError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="putline" name="putline">
+<h3>2.1.4.1.14 putline</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.putline(s)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>Sends a string to the backend.</dd>
+<dt><em>Description</em>:</dt>
+<dd>The putline method sends a (null-terminated) string to the backend.
+This method implements the PQputline function and is used with the
+PostgreSQL COPY command.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError, InternalError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="endcopy" name="endcopy">
+<h3>2.1.4.1.15 endcopy</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.endcopy()</dd>
+<dt><em>Returns</em>:</dt>
+<dd>Syncs with the backend.</dd>
+<dt><em>Description</em>:</dt>
+<dd>This function waits until the backend has finished the copy. It should
+either be issued when the last string has been sent to the backend
+using putline or when the last string has been received from the
+backend using getline. It must be issued or the backend may get &quot;out of
+sync&quot; with the frontend.  This method implements the PQputline function
+and is used with the PostgreSQL COPY command.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError, InternalError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="lo-creat" name="lo-creat">
+<h3>2.1.4.1.16 lo_creat</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>lo = c.lo_creat(mode)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgLargeObject.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Create a PostgreSQL large object with the given mode.  This method
+implements the lo_creat function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, OperationalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="lo-import" name="lo-import">
+<h3>2.1.4.1.17 lo_import</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>lo = c.lo_import(filename)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgLargeObject</dd>
+<dt><em>Description</em>:</dt>
+<dd>Imports a file named 'filename' into a PostgreSQL large object.  This
+method implements the lo_import function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, OperationalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="lo-export" name="lo-export">
+<h3>2.1.4.1.18 lo_export</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.lo_export(oid, filename)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A PgLargeObject</dd>
+<dt><em>Description</em>:</dt>
+<dd>Exports a PostgreSQL large object, represented by oid, to a file named
+'filename'.  This method implements the lo_import function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, OperationalError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="lo-unlink" name="lo-unlink">
+<h3>2.1.4.1.19 lo_unlink</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.lo_unlink(oid)</dd>
+<dt><em>Description</em>:</dt>
+<dd>Removes the PostgreSQL large object identified by 'oid' from
+the database.  This method implements the lo_unlink function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, IOError, TypeError</dd>
+</dl>
+</div>
+<div class="section" id="trace" name="trace">
+<h3>2.1.4.1.20 trace</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.trace(fileObject)</dd>
+<dt><em>Description</em>:</dt>
+<dd>Enables tracing of the frontend/backend communications to a
+Python File Object, fileObject.  This method implements the
+PQtrace function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="untrace" name="untrace">
+<h3>2.1.4.1.21 untrace</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.untrace()</dd>
+<dt><em>Description</em>:</dt>
+<dd>Disables tracing enabled by the trace method.  This method
+implements the lo_import function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="the-pgresult-object" name="the-pgresult-object">
+<h3>2.1.4.2 The PgResult Object</h3>
+<p>The PgResult object defines the result of a query.  It has the following
+public, read-only attributes:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">resultType:&nbsp;</td><td class="field-body">the type of the result: DDL, DQL, DML, EMPTY, ERROR.</td>
+</tr>
+<tr class="field"><td class="field-name">resultStatus:&nbsp;</td><td class="field-body">The result status of the query.  It returns the
+output of the PQresultStatus PostgreSQL C API
+function.</td>
+</tr>
+<tr class="field"><td class="field-name">ntuples:&nbsp;</td><td class="field-body">The number of tuples (instances) in the query result.
+It returns the output of the PQntuples function call.</td>
+</tr>
+<tr class="field"><td class="field-name">nfields:&nbsp;</td><td class="field-body">The number of fields (attributes) in each tuple of
+the query result.  It returns the output of the
+PQnfields function.</td>
+</tr>
+<tr class="field"><td class="field-name">binaryTuples:&nbsp;</td><td class="field-body"><p class="first">Contains 1 if the PgResult object contains binary
+tuple data, 0 if it contains ASCII data. It returns
+the output of the PQbinaryTuples function call.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">Binary portals are not supported at this time.</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field"><td class="field-name">cmdStatus:&nbsp;</td><td class="field-body">The command status string from the SQL command that
+generated the PGresult.  It returns the output to the
+PQcmdStatus function.</td>
+</tr>
+<tr class="field"><td class="field-name">cmdTuples:&nbsp;</td><td class="field-body">The number of rows affected by the SQL command.  It
+returns the output of the PQcmdTuples function.</td>
+</tr>
+<tr class="field"><td class="field-name">oidValue:&nbsp;</td><td class="field-body">(7.x and above) The object id of the tuple
+inserted, if the SQL command was an INSERT.
+Otherwise, contains None.  It returns the output of
+the PQoidValue function.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The PgResult Object has the following methods:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">fname:&nbsp;</td><td class="field-body">Returns the field (attribute) name associated with the given
+field index.</td>
+</tr>
+<tr class="field"><td class="field-name">fnumber:&nbsp;</td><td class="field-body">Returns the field (attribute) index associated with the given
+field name.</td>
+</tr>
+<tr class="field"><td class="field-name">ftype:&nbsp;</td><td class="field-body">Returns the type of a field.</td>
+</tr>
+<tr class="field"><td class="field-name">fsize:&nbsp;</td><td class="field-body">Returns the size in bytes of the field.</td>
+</tr>
+<tr class="field"><td class="field-name">fmod:&nbsp;</td><td class="field-body">Returns the type-specific modification data of a field.</td>
+</tr>
+<tr class="field"><td class="field-name">getvalue:&nbsp;</td><td class="field-body">Returns a single field (attribute) value of one tuple of a
+PgResult.</td>
+</tr>
+<tr class="field"><td class="field-name">getlength:&nbsp;</td><td class="field-body">Returns the length of a field (attribute) in bytes.</td>
+</tr>
+<tr class="field"><td class="field-name">getisnull:&nbsp;</td><td class="field-body">Tests a field for a NULL entry.</td>
+</tr>
+<tr class="field"><td class="field-name">clear:&nbsp;</td><td class="field-body">Frees the memory used by result.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="fname" name="fname">
+<h3>2.1.4.2.1 fname</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>s = r.fname(fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>The field (attribute) name associate with the given field
+index.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Returns the field (attribute) name associated with the given
+field index. Field indices start at 0.  It implements the
+PQfname PostgreSQL C API function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="fnumber" name="fnumber">
+<h3>2.1.4.2.2 fnumber</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.fnumber(name)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>The field (attribute) index associated with the given field
+name.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Returns the field (attribute) index associated with the given
+field name, 'name'.  A -1 is returned if the name does not
+match any field.  It implements the PQfnumber function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="ftype" name="ftype">
+<h3>2.1.4.2.3 ftype</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.ftype(fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>Returns the field type associated with the given field index.</dd>
+<dt><em>Description</em>:</dt>
+<dd>The field type associated with the given field index.  The integer
+returned is an internal coding of the type.  Field indices start at 0.
+It implements the PQftype function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="fsize" name="fsize">
+<h3>2.1.4.2.4 fsize</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.fsize(fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>The size in bytes of the field associated with the given field
+index.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Returns the size in bytes of the field associated with the
+given field index. Field indices start at 0.  fsize returns
+type).  -1 is returned if the field is variable size.  It
+implements the PQfsize function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="fmod" name="fmod">
+<h3>2.1.4.2.5 fmod</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.fmod(fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>The type-specific modification data of the field associated
+with the given field index</dd>
+<dt><em>Description</em>:</dt>
+<dd>Returns the type-specific modification data of the field associated
+with the given field index.  Field indices start at 0.  It implements
+the PQfmod function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="getvalue" name="getvalue">
+<h3>2.1.4.2.6 getvalue</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>o = r.getvalue(tidx, fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>A single field (attribute) value of one tuple of a PGresult.</dd>
+<dt><em>Description</em>:</dt>
+<dd><p class="first">Returns a single field (attribute) value of one tuple of a
+PgResult.  Tuple and field indices start at 0.  If the field
+is NULL, the None is returned.  The type of object returned
+depends on the PostgreSQL data type of the field:</p>
+<blockquote>
+<blockquote>
+<table frame="border" rules="all">
+<colgroup>
+<col colwidth="45%" />
+<col colwidth="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th>PostgreSQL Type</th>
+<th>Returned Python Object</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>PG_BOOL</td>
+<td>PgBoolean</td>
+</tr>
+<tr><td>PG_OID</td>
+<td>Integer or PgLargeObject(1)</td>
+</tr>
+<tr><td>PG_INT2</td>
+<td>PgInt2</td>
+</tr>
+<tr><td>PG_INT4</td>
+<td>Integer</td>
+</tr>
+<tr><td>PG_INT8</td>
+<td>PgInt8(2) or Long</td>
+</tr>
+<tr><td>PG_MONEY</td>
+<td>Float</td>
+</tr>
+<tr><td>PG_FLOAT4</td>
+<td>Float</td>
+</tr>
+<tr><td>PG_FLOAT8</td>
+<td>Float</td>
+</tr>
+<tr><td>PG_BYTEA</td>
+<td>String(3)</td>
+</tr>
+<tr><td>All Other Types</td>
+<td>String</td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li>getvalue() will determine if the OID represents a
+PostgreSQL Large Object and returns the appropriate
+object.</li>
+<li>PgInt8 type is only available on system that have
+long long (64 bit integer) support.</li>
+<li>Any escaped characters in the string will be returned
+to their original value in the returned string.</li>
+</ol>
+</blockquote>
+<p>getvalue implements and extends the PQgetvalue function.</p>
+</blockquote>
+</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+</dl>
+</div>
+<div class="section" id="getlength" name="getlength">
+<h3>2.1.4.2.7 getlength</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.getlength(tidx, fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>The length of a field (attribute) in bytes.</dd>
+<dt><em>Description</em>:</dt>
+<dd>Returns the length of a field (attribute) in bytes.  Tuple and
+field indices start at 0.  This is the actual data length for
+the particular data value, that is the size of the object
+pointed to by getvalue. Note that for ASCII-represented values,
+this size has little to do with the binary size reported by
+fsize.  It implements the PQgetlength function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="getisnull" name="getisnull">
+<h3>2.1.4.2.8 getisnull</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = r.getisnull(tidx, fidx)</dd>
+<dt><em>Returns</em>:</dt>
+<dd><dl>
+<dt>1 if the field contains a NULL, 0 if it contains a non-null</dt>
+<dd>value.</dd>
+</dl>
+</dd>
+<dt><em>Description</em>:</dt>
+<dd>Tests a field for a NULL entry. Tuple and field indices start
+at 0.  This function returns 1 if the field contains a NULL, 0
+if it contains a non-null value.  (Note that getvalue will return None
+for a NULL field.)  It implements the PQgetisnull function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="clear" name="clear">
+<h3>2.1.4.2.9 clear</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>r.clear()</dd>
+<dt><em>Description</em>:</dt>
+<dd>Frees the storage associated with a PgResult and invalidates
+the PgResult object.  Any attempt to access the PgResult will
+generate an InterfaceError exception.  The PgResult is automatically
+cleared when the PgResult if deleted, so calling clear explicitly is
+never needed.  It implements and extends the PQclear function.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, TypeError</dd>
+<dt><em>Note</em>:</dt>
+<dd>See the PostgreSQL C API documentation for details.</dd>
+</dl>
+</div>
+<div class="section" id="the-pglargeobject-object" name="the-pglargeobject-object">
+<h3>2.1.4.3 The PgLargeObject object</h3>
+<p>The PgLargeObject class provides methods for accessing the PostgreSQL Large
+Object (LO) system.  It allows access to the LO using Python's File Object
+semantics. The PgLargeObject class defines the following public, read-only
+attributes:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">mode:&nbsp;</td><td class="field-body">The mode used to open the LO</td>
+</tr>
+<tr class="field"><td class="field-name">name:&nbsp;</td><td class="field-body">A string, in the form of &quot;&lt;...&gt;&quot;, indicating the source of the LO.</td>
+</tr>
+<tr class="field"><td class="field-name">closed:&nbsp;</td><td class="field-body">Flag: 1 = the LO is closed.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>and the following public, read-write attribute:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">softspace:&nbsp;</td><td class="field-body">Boolean that indicates whether a space character needs to be
+printed before another value when using the 'print' statement.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The following methods are provided:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">close:&nbsp;</td><td class="field-body">Close the LO.  A closed LO can not be read or written anymore.</td>
+</tr>
+<tr class="field"><td class="field-name">flush:&nbsp;</td><td class="field-body">Flush the internal buffer.</td>
+</tr>
+<tr class="field"><td class="field-name">open:&nbsp;</td><td class="field-body">Open the LO.  A LO can be opened for reading, writing, or both.</td>
+</tr>
+<tr class="field"><td class="field-name">isatty:&nbsp;</td><td class="field-body">Always returns 0.  A LO is never attached to a TTY like device.</td>
+</tr>
+<tr class="field"><td class="field-name">fileno:&nbsp;</td><td class="field-body">Returns the integer 'file descriptor' used by the underlining
+implementation to request I/O operations.</td>
+</tr>
+<tr class="field"><td class="field-name">read:&nbsp;</td><td class="field-body">Read bytes from the LO.</td>
+</tr>
+<tr class="field"><td class="field-name">readline:&nbsp;</td><td class="field-body">Read one entire line from the LO.</td>
+</tr>
+<tr class="field"><td class="field-name">readlines:&nbsp;</td><td class="field-body">Read entire lines from the LO until EOF.</td>
+</tr>
+<tr class="field"><td class="field-name">seek:&nbsp;</td><td class="field-body">Set the LO's current position, like stdio's fseek().</td>
+</tr>
+<tr class="field"><td class="field-name">tell:&nbsp;</td><td class="field-body">Returns the LO's current position, like stdio's ftell().</td>
+</tr>
+<tr class="field"><td class="field-name">write:&nbsp;</td><td class="field-body">Write bytes to the LO.</td>
+</tr>
+<tr class="field"><td class="field-name">writelines:&nbsp;</td><td class="field-body">Write a list of strings to the LO.</td>
+</tr>
+<tr class="field"><td class="field-name">export:&nbsp;</td><td class="field-body">Export a LO to a file.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>Since the PgLargeObject follows Python's File Object semantics, refer to the
+documentation for File Objects for details on using PgLargeObject.  There are
+a few differences, which will be detailed here.</p>
+</div>
+<div class="section" id="open" name="open">
+<h3>2.1.4.3.1 open</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>lo.open(mode)</dd>
+<dt><em>Description</em>:</dt>
+<dd><p class="first">Opens a PostgreSQL Large Object for reading, writing, or both.
+The 'mode' parameter can be either an integer consisting of a
+combination of the INV_READ and INV_WRITE mode bits, or a
+string containing 'r' for reading, or 'w' for writing.  The LO
+can be open for updating by using 'r+' or 'w+'.  A 'b' can be
+included in the mode string to indicate opening the LO for binary data,
+but is not really needed since PostgreSQL does not differentiate
+between binary and non-binary data.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">'w+' will NOT truncate the large object.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt><em>Note</em>:</dt>
+<dd>Open is a built-in function of Python, not a method of the File
+Object.  If there is not transaction started on the associated
+PgConnection object when open is called, one is started.  This
+will only occur for un-pickled large objects and large objects
+created with the PgLargeObject method of libpq (and PgSQL).</dd>
+</dl>
+</div>
+<div class="section" id="close" name="close">
+<h3>2.1.4.3.2 close</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>lo.close()</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method will close an open large object.</dd>
+<dt><em>Note</em>:</dt>
+<dd>If the large object was the result of un-pickling a large
+object or it was created with the PgLargeObject method of
+libpq (or PgSQL), close() will commit the transaction started
+by open().  If a rollback is desired, then pass close a single
+argument of the integer 1.  This argument is only valid if the
+large object was the result of un-pickling a large object or
+created with the PgLargeObject method.</dd>
+</dl>
+</div>
+<div class="section" id="export" name="export">
+<h3>2.1.4.3.3 export</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>i = lo.export(filename)</dd>
+<dt><em>Returns</em>:</dt>
+<dd>1 if successful, 0 if an OS error occurred, &lt; 0 if a database
+error occurred.</dd>
+<dt><em>Description</em>:</dt>
+<dd>This method will export the PostgreSQL large object to the
+specified UNIX filename.</dd>
+<dt><em>Note</em>:</dt>
+<dd>The file is stored on the database server, not the client machine (if
+different from the server).</dd>
+</dl>
+</div>
+<div class="section" id="the-pgnotify-object" name="the-pgnotify-object">
+<h3>2.1.4.4 The PgNotify Object</h3>
+<p>The PgNotify object encapsulates the data returned by the notifies method of
+the PgConnection class.  It provides the following read-only attributes:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">relname:&nbsp;</td><td class="field-body">The name of the relation containing data.</td>
+</tr>
+<tr class="field"><td class="field-name">be_pid:&nbsp;</td><td class="field-body">The process ID of the PostgreSQL backend sending the
+notification.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="the-pgversion-object" name="the-pgversion-object">
+<h3>2.1.4.5 The PgVersion Object</h3>
+<p>The PgVersion object encapsulates information about the version of PostgreSQL
+that a connection object is connected to.  It provides the following read-only
+attribute:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">major:&nbsp;</td><td class="field-body">The major version number.</td>
+</tr>
+<tr class="field"><td class="field-name">minor:&nbsp;</td><td class="field-body">The minor version number.</td>
+</tr>
+<tr class="field"><td class="field-name">level:&nbsp;</td><td class="field-body">The patch level.</td>
+</tr>
+<tr class="field"><td class="field-name">post70:&nbsp;</td><td class="field-body">A flag that is true if the version is &gt;= 7.1.0.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>You can obtain the result of the 'SELECT version()' used to initialize this
+object using the str() or repr() function.</p>
+<p>For example, for version 6.5.3, the contents of the PgVersion object would be:</p>
+<blockquote>
+<pre class="literal-block">connection.version        == &quot;PostgreSQL 6.5.3 on &lt;system dependent info&gt;&quot;
+connection.version.major  == 6
+connection.version.minor  == 5
+connection.version.level  == 3
+connection.version.post70 == 0</pre>
+</blockquote>
+<p>For example, for version 7.1.1, the contents of PgVer would be:</p>
+<blockquote>
+<pre class="literal-block">connection.version        == &quot;PostgreSQL 7.1.1 on &lt;system dependent info&gt;&quot;
+connection.version.major  == 7
+connection.version.minor  == 1
+connection.version.level  == 1
+connection.version.post70 == 1</pre>
+</blockquote>
+<p>Also, you can use the PgVersion object to compare against a number or string
+form of the version.  The form used for numeric comparison is &quot;Mmmll&quot;, where
+&quot;M&quot; is the major number, &quot;mm&quot; is the minor number, and &quot;ll&quot; is the patch level.
+An example:</p>
+<blockquote>
+<p>Assume that the PostgreSQL version is 7.0.2, then:</p>
+<blockquote>
+<pre class="literal-block">connection.version == 70002 will be true.
+connection.version &lt; 70001L will be false.
+connection.version &gt; 70001.0 will be true.</pre>
+</blockquote>
+</blockquote>
+<p>You can also compare against a string as follows:</p>
+<blockquote>
+<p>Assume that the PostgreSQL version is 7.1.2, then:</p>
+<blockquote>
+<pre class="literal-block">connection.version == &quot;7.0.2&quot; will be false.
+connection.version &lt; &quot;7.0.1&quot; will be false.
+connection.version &gt; &quot;7.1&quot; will be true.</pre>
+</blockquote>
+</blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">Both the libpq and PgSQL connection objects have the version attribute.</td>
+</tr>
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body">Comparisons against strings (i.e. &quot;7.0.1&quot;) does not work in
+Python 2.0.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-pgsql-module" name="the-pgsql-module">
+<h3>2.2 The PgSQL module</h3>
+<p>The PgSQL module provide a Python DB-API 2.0 compliant module on top of the
+libpq module.  As the DB-API 2.0 interface is documented elsewhere
+(<a class="reference" href="http://www.python.org/topics/database/DatabaseAPI-2.0.html">http://www.python.org/topics/database/DatabaseAPI-2.0.html</a>), I will only
+describe the differences in the PgSQL here.</p>
+</div>
+<div class="section" id="importing-pgsql" name="importing-pgsql">
+<h3>2.2.1 Importing PgSQL</h3>
+<p>The module, PgSQL, is part of the pyPgSQL package.  It is imported using
+the following statement:</p>
+<blockquote>
+<pre class="doctest-block">&gt;&gt;&gt; from pyPgSQL import PgSQL</pre>
+</blockquote>
+</div>
+<div class="section" id="differences-at-the-module-level" name="differences-at-the-module-level">
+<h3>2.2.2 Differences at the Module Level</h3>
+<ol class="arabic">
+<li><p class="first">The Binary constructor is a method of the Connection object, not the module.
+For PostgreSQL, a Large Object can only be created in conjunction with a
+Connection, it has no meaning outside of the context of a Connection.</p>
+</li>
+<li><p class="first">The following types are defined to support certain PostgreSQL data types:</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PgInt2:&nbsp;</td><td class="field-body"><p class="first">Supports the PG_INT2 data type.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgInt8:&nbsp;</td><td class="field-body"><p class="first">Supports the PG_INT8 data type.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgBoolean:&nbsp;</td><td class="field-body"><p class="first">Supports the PG_BOOL data type.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">The following classes are defined to support certain PostgreSQL data types:</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PgNumeric:&nbsp;</td><td class="field-body"><p class="first">Supports the PG_NUMERIC data type.  It uses a Python Long as
+the base type and provides the following arithmetic operations:
+addition, subtraction, multiplication, and division.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgMoney:&nbsp;</td><td class="field-body"><p class="first">Supports the PG_CASH data type.  It uses a Python Float as the
+base type with range checking to prevent it from exceeding the
+range of the PG_CASH data type.  Any operation that applies to
+a Python Float can be used with a PgMoney object.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgBytea:&nbsp;</td><td class="field-body"><p class="first">This class supports the PG_BYTEA data type.  It is a wrapper
+around a Python String that provides for proper escaping of
+the string when used in a query.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgOther:&nbsp;</td><td class="field-body"><p class="first">This class supports all the other PostgreSQL data types that
+do not map directly into a Python object or one of the support
+classes listed above (such as PG_BOX, PG_POINT, etc.).  As time
+goes on, more PostgreSQL data types will have support classes
+defined for them, reducing the number of PostgreSQL data types
+that fall within this class.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgArray:&nbsp;</td><td class="field-body"><p class="first">This class provide support for PostgreSQL arrays.  It is a
+wrapper around a Python list that supports all the methods of
+a list plus adds a __quote__ method for quoting arrays.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">The following class is defined:</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PgVersion:&nbsp;</td><td class="field-body"><p class="first">Contains the version number of PostgreSQL database engine that
+we are connected to.  This information is used to change the
+behavior of PgSQL based on the version of the PostgreSQL
+engine.  See the section 2.6 for more details on the
+PgVersion object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">The following constructors are defined by the PgSQL module.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">PgBoolean:&nbsp;</td><td class="field-body"><p class="first">Construct a PgBoolean from a Python numeric or string.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgInt2:&nbsp;</td><td class="field-body"><p class="first">Construct a PgInt2 from a Python numeric or string.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgInt8:&nbsp;</td><td class="field-body"><p class="first">Construct a PgInt8 from a Python numeric or string.</p>
+</td>
+</tr>
+<tr class="field"><td class="field-name">PgLargeObject:&nbsp;</td><td class="field-body"><p class="first">Construct a PgLargeObject from a PgConnection object and
+a OID identifying a PostgreSQL large object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>These constructors are documented in the libpq section of this document.</p>
+</li>
+<li><p class="first">The following attribute is defined in the PgSQL module:</p>
+<blockquote>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">fetchReturnsList:&nbsp;</td><td class="field-body"><p class="first">controls the type of result returns by the fetchXXX
+methods.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>Setting this attribute to 1 will cause the fetchXXX methods to return a
+list instead of a PgResultSet.  This will provide better performance by
+sacrificing the convenient access methods provide by a PgResultSet.</p>
+<p>The default value for fetchReturnsList is 0.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="differences-in-the-connection-object" name="differences-in-the-connection-object">
+<h3>2.2.3 Differences in the Connection Object</h3>
+<ol class="arabic">
+<li><p class="first">The Connection object has an additional read-only attribute called notices.
+This attribute is a list of notices returned by the pq library.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body"><p class="first">Under normal usage, certain (but not all) notices received from
+the libpq C-API library are converted into Warning exceptions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">The Connection object has an additional read-only attribute called version.
+This attribute contains a PgVersion object encapsulating the version
+information of the PostgreSQL backend that the Connection object is
+connected to.</p>
+</li>
+<li><p class="first">The Binary constructor method is a Connection method, not a PgSQL module
+function.</p>
+</li>
+<li><p class="first">A unlink method is available in the Connection object to remove a Large
+Object from the database.</p>
+</li>
+<li><p class="first">A PgSQL specific Connection attribute, called TransactionLevel, specifies
+the isolation level to use within a transaction.  It can be set to &quot;&quot;,
+&quot;READ COMMITED&quot;, or &quot;SERIALIZABLE&quot;.  PgSQL will issue the appropriate &quot;SET
+TRANSACTION LEVEL&quot; statement whenever a new transaction is started for
+the connection.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body"><p class="first">The value of this attribute can not be changed if there are any
+active cursors for the connection.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+</div>
+<div class="section" id="unlink" name="unlink">
+<h3>2.2.3.1 unlink</h3>
+<dl>
+<dt><em>Syntax</em>:</dt>
+<dd>c.unlink(PgLargeObject)</dd>
+<dt><em>Description</em>:</dt>
+<dd>Removes the PostgreSQL large object identified from the
+database.</dd>
+<dt><em>Exceptions</em>:</dt>
+<dd>InterfaceError, IOError, TypeError</dd>
+</dl>
+</div>
+<div class="section" id="differences-in-the-cursor-object" name="differences-in-the-cursor-object">
+<h3>2.2.4 Differences in the Cursor Object</h3>
+<ol class="arabic">
+<li><p class="first">The description attribute is a sequence of 8-item sequences.  The first
+seven items are the same as described in the DB-API 2.0 documentation.
+The 8th item is the 'isArray' flag.  If this is 1, then the associated
+result column is a PostgreSQL array.</p>
+</li>
+<li><p class="first">The callproc method will always return None.  PostgreSQL does not have
+stored procedures in the same sense as other databases such as Oracle.
+There are no 'Input', 'Output', or 'Input/Output' parameters.  In PgSQL,
+this method is used to call PostgreSQL functions, which only return a
+result set (or nothing).</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body"><p class="first">Beginning with PostgreSQL 7.2, it is possible to return a
+reference to a cursor from PL/pgSQL.  PgSQL will create a new
+Cursor object for the referenced cursor that is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">When using the execute method, you should only use '%s' [or '%(name)s']
+(without the quote marks) to specify locations where the parameters are to
+be substituted, even for integers, floats and other non-string variables.
+The execute method will convert all the parameters to a string, applying any
+quoting that may be necessary before sending the query to the back-end.</p>
+</li>
+<li><p class="first">The fetchone method will return a PgResultSet object instead of a sequence.
+A PgResultSet emulates a Python List object (for DB-API 2.0 compliance),
+but also acts as a dictionary and allows the column data to be retrieved by
+using the column name as an attribute of the PgResultSet object. The column
+names are case-insensitive.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body"><p class="first">This feature is controlled by the fetchReturnsList attribute of
+the PgSQL module.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">The fetchmany and fetchall methods return a sequence of PgResultSet objects
+instead of a sequence of sequences.</p>
+<table class="field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><td class="field-name">NOTE:&nbsp;</td><td class="field-body"><p class="first">This feature is controlled by the fetchReturnsList attribute of
+the PgSQL module.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">A PostgreSQL specific attribute, named oidValue, was added to the cursor
+object.  This attribute returns the value of the oidValue attribute of the
+PgResult object associated with the cursor object and provides a convenient
+way to get the object ID of a newly inserted record.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="general-notes-and-observations" name="general-notes-and-observations">
+<h2>3.0 General Notes and Observations</h2>
+<p>The PostgreSQL database system has no auto-commit setting.  It is always in
+auto-commit mode unless a transaction is started.  To achieve the DB-API 2.0
+mandated behaviour, when connection.autocommit is 0, a transaction is
+started when the first cursor is created for a connection.  After a commit
+or rollback, a new transaction is created on the next call to execute().</p>
+<hr />
+<p>PostgreSQL arrays are no longer (directly) represented by Python lists.
+This means that lists and tuples are not longer treated specially by
+Cursor.execute().  This resolves a problem of using the IN SQL syntax with
+Cursor.execute().  For example, the following statement will now work:</p>
+<blockquote>
+<pre class="doctest-block">&gt;&gt;&gt; Cursor.execute('select * from table where column1 in %s', ((1, 3, 4),))</pre>
+</blockquote>
+<p>It will generate the following SQL statement:</p>
+<blockquote>
+select * from table where column1 in (1, 3, 4)</blockquote>
+<p>It also means that to insert an PostgreSQL array, you must pass a PgArray
+instance to Cursor.execute().  For example, if you have a list that you want
+to insert into a table as a PostgreSQL array, you would use:</p>
+<blockquote>
+<pre class="doctest-block">&gt;&gt;&gt; cursor.execute('insert in sometable values (%s)', PgArray(yourlist))</pre>
+</blockquote>
+<p>You can also build a PostgreSQL array by creating an empty PgArray instance
+and populating it using the various list methods (.append(), .insert(), etc.).</p>
+<hr />
+<p>When working with PostgreSQL large object, you MUST be in a transaction.
+The code will try to ensure that a transaction is active while working with
+large object (i.e. lo_open will start a transaction if necessary.  lo_close
+will end the transaction if it determines that lo_open started one.)</p>
+<hr />
+<p>Beginning with PostgreSQL 7.2, you can now create a cursor in PL/pgSQL and 
+return a reference to that cursor.  PgSQL will transform the reference to
+the created cursor into a Cursor object that can be used to fetch the
+results of the cursor.  For example (assuming that mmYearInfo returns a
+reference cursor):</p>
+<blockquote>
+<pre class="doctest-block">&gt;&gt;&gt; from pyPgSQL import PgSQL
+&gt;&gt;&gt; cx = PgSQL.connect(database='esi')
+&gt;&gt;&gt; cu = cx.cursor()
+&gt;&gt;&gt; cu.callproc('mmYearInfo')
+&gt;&gt;&gt; rs = cu.fetchone()
+&gt;&gt;&gt; rs
+[&lt;pyPgSQL.PgSQL.Cursor instance at 0x818495c&gt;]
+&gt;&gt;&gt; c = rs[0]
+&gt;&gt;&gt; for i in c.description:
+...     print i
+... 
+['model_year', varchar, 4, 8, None, None, None, 0]
+['mktg_div_name', varchar, 50, 54, None, None, None, 0]
+['model_desc', varchar, 50, 54, None, None, None, 0]
+['book_types', varchar, 50, 54, None, None, None, 0]
+['vehicle_syskey', integer, 4, 4, None, None, None, 0]
+&gt;&gt;&gt; r = c.fetchone()
+&gt;&gt;&gt; r
+['2003', 'Buick', 'Century', '1;8;9', 2211]
+&gt;&gt;&gt; </pre>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>

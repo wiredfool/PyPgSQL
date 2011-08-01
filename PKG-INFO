@@ -1,0 +1,20 @@
+Metadata-Version: 1.0
+Name: pyPgSQL
+Version: 2.5.1
+Summary: pyPgSQL - A Python DB-API 2.0 compliant interface to PostgreSQL.
+Home-page: http://pypgsql.sourceforge.net/
+Author: pyPgSQL developers
+Author-email: pypgsql-devel@lists.sourceforge.net
+License: Python
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Other Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Python License (CNRI Python License)
+Classifier: Natural Language :: English
+Classifier: Operating System :: Microsoft :: Windows :: Windows 95/98/2000
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: C
+Classifier: Programming Language :: Python
+Classifier: Topic :: Database :: Front-Ends

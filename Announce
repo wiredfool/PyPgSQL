@@ -1,0 +1,91 @@
+Announce: pyPgSQL - Version 2.5 is released.
+===========================================================================
+
+pyPgSQL v2.5 has been released.
+
+It is available at http://pypgsql.sourceforge.net.
+
+pyPgSQL is a package of two (2) modules that provide a Python DB-API 2.0
+compliant interface to PostgreSQL databases. The first module, libpq, is
+written in C and exports the PostgreSQL C API to Python.  The second module,
+PgSQL, provides the DB-API 2.0 compliant interface and support for various
+PostgreSQL data types, such as INT8, NUMERIC, MONEY, BOOL, ARRAYS, etc. This
+module is written in Python and works with PostgreSQL 7.0 or later and Python
+2.0 or later.
+
+It was tested with PostgreSQL 8.1.4 and the latest patchlevels of Python 2.1,
+2.2, 2.3 and 2.4.
+
+Note: It is highly recommended that you use PostgreSQL 7.2 or later and
+      Python 2.1 or later.  If you want to use PostgreSQL Large Objects
+      under Python 2.2.x, you *must* use Python 2.2.2, or later because of
+      a bug in earlier 2.2 versions.
+
+Project homepages:
+pyPgSQL:        http://pypgsql.sourceforge.net/
+PostgreSQL:     http://www.postgresql.org/
+Python:         http://www.python.org/
+
+---------------------------------------------------------------------------
+ChangeLog:
+===========================================================================
+
+Changes since pyPgSQL Version 2.4
+=================================
+
+Changes to README
+-----------------
+* Updates for 2.5.
+
+Changes to PgSQL.py
+-------------------
+* Additional attribute cursor.debug:
+
+    Setting this attribute to 'text' will cause the query that will
+    be executed to be displayed to STDOUT.  If it is set to 'pre' or
+    'div', the query will be displayed to STDOUT within a <pre> or
+    <dif> HTML block.  If it is set to None (the default), the query
+    will not be displayed.
+
+* New module-level variable useUTCtimeValue:
+
+    Setting this variable to 1 will cause the datatime instance returned from
+    the result set for a timestame with timezone to reference the corresponding
+    UTC time value (not the value expressed in the clients time zone).
+
+* mxDateTime's RelativeDateTime instead of DateTimeDelta is now used for
+PostgreSQL INTERVALs.
+
+* Several other fixes in the PostgreSQL interval code
+
+* Several bugfixes in the PgNumeric type
+
+*  PgInt2 and PgInt8 used to be custom number types that checked for overflows
+in their specific ranges. In order to make them work across current Python
+versions we got rid of them and replaced them with int and long.
+
+* Many changes in parameter quoting to make them work in more cases like
+* PostgreSQL procedures
+
+Changes to libpqmodule.c
+------------------------
+* Bugfix for quoting Bytea types
+
+Changes to pgconnection.c
+-------------------------
+* Fixed compatibility problems with PostgreSQL 8.x.
+* Added debug support
+
+Changes to pgresult.c
+---------------------
+* Integrated patch #1224272. Use PyOS_ascii_strtod instead of strtod in order
+  to be locale-agnostic.
+
+Changes to pgversion.c
+----------------------
+* Applied patch #882032. Vendor-extensions to version
+  number should not create problems any longer.
+
+* Fixed Bug #786712 & #816729: Allowed for a version string
+  containing the words "alpha" and "beta".
+
