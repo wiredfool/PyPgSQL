@@ -3,6 +3,17 @@
 Changes since pyPgSQL Version 2.5
 =================================
 
+--Still In Progress -- changes not final yet-- 
+	
+Array quoting has changed such that a None in an array sends null to the backend
+and a Null returned from the backend returns a None in the array. 
+	
+Changed String and bytea quoting functions to use the appropriate PqQuote*conn
+functions from libpq so that characters are correctly quoted depending on the 
+connection settings. 
+
+Tests updated (Partially) for newer PG installs  (>7.3)
+	
 Added support for hex bytea encoding used in PG 9.0+
 
 Patch for a security hole in PostgreSQL (CVE-2006-2314): escaping quotes with
