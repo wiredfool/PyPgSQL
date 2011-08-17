@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pyPgSQL
-Version: 2.5.1
+Version: 2.5.3
 Summary: pyPgSQL - A Python DB-API 2.0 compliant interface to PostgreSQL.
 Home-page: http://pypgsql.sourceforge.net/
 Author: pyPgSQL developers
