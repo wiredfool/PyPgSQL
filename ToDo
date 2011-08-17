@@ -1,5 +1,5 @@
 =====ToDo=====
-  - Test with something other than the unit tests on something other than pg9.0
+  - Test with something other than the unit tests
   - See if there's some way to reduce the number of copies of the string when running 
     a bytea, since there's the original, one out of libpq, one with E' ' added, and 
     one made to return to python from C land.
@@ -14,3 +14,4 @@
     - Done in the libpq/PQEscapeByteaConn function. 
   - use pqUnquoteBytea. 
   - return the quote functions in and make a big deprecation warning. 
+  - Test on 8.2->9.0
