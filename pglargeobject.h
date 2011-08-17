@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pglargeobject.h,v 1.3 2001/10/13 20:40:35 ballie01 Exp $"
+// #ident "@(#) $Id: pglargeobject.h,v 1.3 2001/10/13 20:40:35 ballie01 Exp $"
 #ifndef Pg_LARGEOBJECT_H
 #define Pg_LARGEOBJECT_H
 #ifdef __cplusplus

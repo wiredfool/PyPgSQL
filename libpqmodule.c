@@ -1,5 +1,4 @@
-#ident "@(#) $Id: libpqmodule.c,v 1.33 2006/06/07 17:21:28 ghaering Exp $"
-/* vi:set sw=4 ts=8 showmode ai: */
+// #ident "@(#) $Id: libpqmodule.c,v 1.33 2006/06/07 17:21:28 ghaering Exp $"
 /**(H+)*****************************************************************\
 | Name:         libpqmodule.c                                           |
 |                                                                       |
@@ -31,8 +30,9 @@
 |                                                                       |
 | Date      Ini Description                                             |
 | --------- --- ------------------------------------------------------- |
-| 15AUG2011 eds Moved PgQuote* into pgconnection.c to use pqQuote*conn  |
-|               functions.                                              |     
+| 15AUG2011 eds Moved PgQuote* into pgconnection.c to use pqEscape*conn |
+|               functions. PGUnquoteBytea now uses pqunescapeBytea      |
+|               Deprecation warning on PgQuote*
 | 01AUG2011 eds Patch for hex bytea encoding used in pg9.0+             |
 | 07JUN2006 gh  Patch for a security hole in PostgreSQL (CVE-2006-2314):|
 |               escaping quotes with backslashes is insecure.  The      |
@@ -74,11 +74,9 @@
 |               box.  See revision 1.25 for earlier comments.           |
 \*(H-)******************************************************************/
 
-#include <string.h>
-#include <stdlib.h>
+#include <Python.h>
 #include <stddef.h>
 #include <ctype.h>
-#include <Python.h>
 #include <structmember.h>
 #include <fileobject.h>
 #include "libpqmodule.h"
@@ -110,66 +108,173 @@ PyObject *PqErr_NotSupportedError;        /*       +--NotSupportedError */
 | Define the libq module functions.                                     |
 \***********************************************************************/
 
-#define DIG(VAL) ((VAL) + '0')
-#define VAL(CH)  ((CH) - '0')
+static char libPQquoteString_Doc[] =
+    "PgQuoteString(string) -> string\n"
+	" DEPRECATED: use PgConnection.PgQuoteString(s) instead \n"
+    "    This is a helper function that will quote a Python String in a "
+    "manner\n    that is acceptable to PostgreSQL";
 
-PyObject *unQuoteBytea(char *sin)
-{
-    int i, j, slen, byte;
+static PyObject *libPQquoteString(PyObject *self, PyObject *args){
+    int  addl, i, j, forArray=0;
+	size_t ct_converted, slen;
+    char *sin;
     char *sout;
-    char temp[3];
+	char *sforarray = 0;
     PyObject *result;
 
-    slen = strlen(sin);
-    sout = (char *)PyMem_Malloc(slen);
+	PyErr_WarnEx(PyExc_DeprecationWarning, 
+		"PgQuoteString is deprecated, use PgConnection.PgQuoteString(s) instead", 1);
+
+    if (!PyArg_ParseTuple(args,"s|i:PgQuoteString", &sin, &forArray)) 
+        return NULL;
+
+    /* Calculate the size for the new memory string. */
+    slen = strlen((char *)sin);
+
+	if (forArray) {
+		// figure out how much for the double encoding  
+		// just pre-double encode the important bits. 
+		// It's 3 passes, and it's roughly double the memory, but 
+		// forarray used to take a 7x, so it's probably a little better. 
+		addl = 0;
+		for (i = 0; i < slen; i++) {
+			switch (sin[i]){
+			case '\\':
+            case '"':
+				addl++;
+				break;
+			}
+		}
+		sforarray = (char *)PyMem_Malloc(slen + addl + 1); 
+		if (sforarray == (char *)NULL)
+			return PyErr_NoMemory();
+		for (i=0, j=0; i < slen; i++) {
+			switch (sin[i]){
+			case '\\':
+            case '"':
+				sforarray[j++] = '\\';
+                sforarray[j++] = sin[i];
+				break;
+			default:
+				sforarray[j++] = sin[i];
+			}
+		}
+		sforarray[j] = (char)0;
+		slen = slen + addl;
+		sin = sforarray; /* swap me some pointers */
+	}
+				
+    i = (slen * 2) + 4; /* 2x len + 1 byte for pq, rest for me */
+
+    sout = (char *)PyMem_Malloc(i); /* Assume every char is quoted */
     if (sout == (char *)NULL)
         return PyErr_NoMemory();
-
-    if (sin[0] == '\\' && sin[1] == 'x') {
-		/* hex encoding. If we start with \x, then it's not an octal escape sequence. */ 
-		temp[2] = '\0';
-		for (i = 2, j = 0; i < slen ; i+=2, j+=1) {
-			temp[0] = sin[i];
-			temp[1] = sin[i+1];
-			sout[j] = (char)strtol(temp, NULL, 16);
+    i=0;
+	if (!forArray) {
+		sout[i++] = 'E';
+	}
+    sout[i++] = (forArray ? '"' : '\'');
+	ct_converted = PQescapeString(sout + i, sin, slen);
+	
+	if (!ct_converted && slen) {
+	    PyErr_SetString(PqErr_DataError,"PQescapeString failed");
+		PyMem_Free(sout);
+		if (sforarray) {
+			PyMem_Free(sforarray);
 		}
-    } else {
-		for (i = j = 0; i < slen;)
-			{
-				switch (sin[i])
-					{
-					case '\\':
-						i++; 
-						if (sin[i] == '\\') {
-							sout[j++] = sin[i++];
-						} else {
-							if ((!isdigit(sin[i]))   ||
-								(!isdigit(sin[i+1])) ||
-								(!isdigit(sin[i+2])))
-								goto unquote_error;
+		return (PyObject *)NULL;
+	}
 
-							byte = VAL(sin[i++]);
-							byte = (byte << 3) + VAL(sin[i++]);
-							sout[j++] = (byte << 3) + VAL(sin[i++]);
-						}
-						break;
+	sout[i + ct_converted] = (forArray ? '"' : '\'');
+	sout[i + ct_converted +1 ] = (char)0;
 
-					default:
-						sout[j++] = sin[i++];
-					}
-			}
-    }
-
-    result = Py_BuildValue("s#", sout, j);
+	if (sforarray) {
+		PyMem_Free(sforarray);
+	}
+	
+    result = Py_BuildValue("s#", sout, ct_converted + i + 1);
     PyMem_Free(sout);
 
     return result;
-
- unquote_error:
-    PyMem_Free(sout);
-	PyErr_SetString(PyExc_ValueError, "Bad input string for type bytea");	
-    return (PyObject *)NULL;
 }
+
+static char libPQquoteBytea_Doc[] =
+    "PgQuoteBytea(string, forArray) -> string\n"
+ 	" DEPRECATED: use PgConnection.PgQuoteBytea(s) instead \n"
+   "    This is a helper function that will quote a Python String (that can "
+    "contain embedded NUL bytes) in a manner\n    that is acceptable to "
+    "PostgreSQL";
+
+static PyObject *libPQquoteBytea(PyObject *self, PyObject *args){
+    int i, forArray = 0;
+	size_t slen, to_length;
+    unsigned char *sin;
+	unsigned char *sint;
+    unsigned char *sout;
+    PyObject *result;
+	
+	PyErr_WarnEx(PyExc_DeprecationWarning, 
+	    "PgQuoteBytea is deprecated, use PgConnection.PgQuoteBytea(s) instead", 1);
+    
+	if (!PyArg_ParseTuple(args,"s#|i:PgQuoteBytea", &sin, &slen, &forArray)) 
+        return NULL;
+
+	sint = PQescapeBytea(sin, slen, &to_length);
+
+	if (slen && !to_length) {
+		/* error handling here is more of a guess than in the *conn methods */
+	    PyErr_SetString(PqErr_DataError,"PQescapeBytea failed");
+		if (sint) {
+			PQfreemem(sint);
+		}
+		return (PyObject *)NULL;
+	}
+
+    sout = (unsigned char *)PyMem_Malloc(to_length + 4);
+    if (sout == (unsigned char *)NULL){
+        return PyErr_NoMemory();
+	}
+
+	i = 0;
+	if (!forArray) {
+		sout[i++] = 'E';
+	}
+    sout[i++] = (forArray ? '"' : '\'');
+	memcpy(sout + i, sint, to_length);
+    PQfreemem(sint);
+
+	/* overwrite the null with a ' */
+	sout[to_length + i -1] = (forArray ? '"' : '\''); 
+
+	/* s# doesn't need a null value at the end, since it's length checked */
+    result = Py_BuildValue("s#", sout, to_length + i);
+	PyMem_Free(sout);
+
+    return result;
+}
+
+PyObject *unQuoteBytea(unsigned char *sin){
+	/* used in pgresult.c as well */
+	unsigned char *sout;
+	size_t to_length = 0;
+	PyObject *result;
+	
+	sout = PQunescapeBytea(sin, &to_length);
+	if (sout==(unsigned char *)NULL) {
+		/* it's the most likely error anyway */
+		return PyErr_NoMemory();
+		/* Unless...
+		PyErr_SetString(PyExc_ValueError, "Bad input string for type bytea");	
+		return (PyObject *)NULL;
+		*/
+	}
+
+	result = Py_BuildValue("s#", sout, to_length);
+	PQfreemem(sout);
+
+	return result;
+}
+
 
 static char libPQunQuoteBytea_Doc[] =
     "PgUnQuoteString(string) -> string\n"
@@ -179,12 +284,13 @@ static char libPQunQuoteBytea_Doc[] =
 
 static PyObject *libPQunQuoteBytea(PyObject *self, PyObject *args)
 {
-    char *sin;
+    unsigned char *sin;
 
-    if (!PyArg_ParseTuple(args,"s:PgUnQuoteString", &sin)) 
+    if (!PyArg_ParseTuple(args,"s:PgUnQuoteString", &sin)) {
         return NULL;
-
-    return unQuoteBytea(sin);
+	}
+	
+	return unQuoteBytea(sin);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -700,6 +806,8 @@ static PyMethodDef libpqMethods[] = {
 #endif
     { "PQconndefaults",  (PyCFunction)libPQconndefaults,  1,
       libPQconndefaults_Doc },
+    { "PgQuoteString", (PyCFunction)libPQquoteString, 1, libPQquoteString_Doc },
+    { "PgQuoteBytea", (PyCFunction)libPQquoteBytea, 1, libPQquoteBytea_Doc },
     { "PgUnQuoteBytea", (PyCFunction)libPQunQuoteBytea, 1,
                                                     libPQunQuoteBytea_Doc },
     { "PgBooleanFromString", (PyCFunction)libPQbool_FromString, 1 },

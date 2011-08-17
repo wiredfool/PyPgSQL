@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pgnotify.h,v 1.1 2001/08/24 22:26:00 ballie01 Exp $"
+// #ident "@(#) $Id: pgnotify.h,v 1.1 2001/08/24 22:26:00 ballie01 Exp $"
 #ifndef Pg_NOTIFY_H
 #define Pg_NOTIFY_H
 #ifdef __cplusplus

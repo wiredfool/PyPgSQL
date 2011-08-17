@@ -52,12 +52,14 @@ import types
 import string
 from pyPgSQL import libpq
 
+from TestConnection import Defaults
+
 version = sys.version_info
 print version
 version = ((((version[0] * 100) + version[1]) * 100) + version[2])
 
 # Get a connection and a version string to be used globally.
-cnx = libpq.PQconnectdb("dbname=pypgsql host=192.168.10.249")
+cnx = libpq.PQconnectdb("dbname=pypgsql host=%s port=%s" %(Defaults.host, Defaults.port))
 vers = cnx.version
 print vers
 dbvstr = cnx.query('select version()').getvalue(0, 0)

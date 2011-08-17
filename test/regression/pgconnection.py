@@ -47,6 +47,8 @@ import types
 import string
 from pyPgSQL import libpq
 
+from TestConnection import Defaults
+
 version = sys.version_info
 version = ((((version[0] * 100) + version[1]) * 100) + version[2])
 
@@ -59,8 +61,8 @@ del defs
 del i
 if conndefs['host'] == None:
 	conndefs['host'] = 'localhost'
-conndefs['port'] = int(conndefs['port'])
-conndefs['host'] = '192.168.10.249'
+conndefs['port'] = Defaults.port
+conndefs['host'] = Defaults.host
 #conndefs['password'] = 'pass'
 
 members = ["host", "port", "db", "tty", "user", "password", "backendPID",
@@ -79,7 +81,7 @@ methods = ["consumeInput", "endcopy", "finish", "getResult", "getline",
 		   "setnonblocking"]
 
 # Get a connection and a version string to be used globally.
-cnx = libpq.PQconnectdb("dbname=pypgsql host=192.168.10.249")
+cnx = libpq.PQconnectdb("dbname=pypgsql host=%s port=%s" %(Defaults.host, Defaults.port))
 vstr = "%(major)d.%(minor)d.%(level)d" % cnx.version
 vnbr = ((((cnx.version.major * 100) + cnx.version.minor) * 100) + \
 		cnx.version.level)

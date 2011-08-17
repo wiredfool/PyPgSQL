@@ -1,5 +1,4 @@
-#ident "@(#) $Id: pgversion.c,v 1.24 2006/06/02 14:27:45 ghaering Exp $"
-/* vi:set sw=4 ts=8 showmode ai: */
+// #ident "@(#) $Id: pgversion.c,v 1.24 2006/06/02 14:27:45 ghaering Exp $"
 /**(H+)*****************************************************************\
 | Name:			pgversion.c												|
 |																		|
@@ -31,6 +30,8 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 16AUG2011 eds removed unused pgstricmp, reordered includes to build   | 
+|               without warnings.                                       |
 | 02JUN2006 gh	Applied patch #882032. Vendor-extensions to version		|
 |				number should not create problems any longer.			|
 | 26SEP2005 gh	Minor fix for stricter C compilers (move variable		|
@@ -95,13 +96,9 @@
 | 02AUG2001 bga Initial release by Billy G. Allie.						|
 \*(H-)******************************************************************/
 
-#include <string.h>
-#include <stdlib.h>
+#include <Python.h>
 #include <stddef.h>
 #include <ctype.h>
-#include <limits.h>
-#include <errno.h>
-#include <Python.h>
 #include <structmember.h>
 #include "libpqmodule.h"
 
@@ -119,38 +116,6 @@ typedef struct {
 	PyObject *value;
 } PgVersion;
 
-/***********************************************************************\
-| Name:			pgstricmp												|
-| Synopsis:		int pgstricmp(char *s1, char *s2);						|
-| Description:	pgstricmp compares its arguments (ignoring case) and	|
-|				returns an integer less than, equal to, or greater than |
-|				0, based upon whether s1 is lexicographically less		|
-|				than, equal to, or greater than s2.						|
-|																		|
-| Note:			Characters following a null character are not compared. |
-\***********************************************************************/
-
-static int pgstricmp(char *s1, char *s2)
-{
-	int c1 = 0, c2 = 0;
-
-	for (;(*s1 != 0) && (*s2 != 0); s1++, s2++)
-	{
-		if (isupper(*s1))
-			c1 = tolower(*s1);
-		else
-			c1 = *s1;
-		if (isupper(*s2))
-			c2 = tolower(*s2);
-		else
-			c2 = *s2;
-
-		if (c1 != c2)
-			break;
-	}
-
-	return (c1 - c2);
-}
 
 /***********************************************************************\
 | Name:			parseToken												|

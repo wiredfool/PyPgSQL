@@ -1,4 +1,4 @@
-#ident "@(#) $Id: libpqmodule.h,v 1.11 2005/09/26 08:08:17 ghaering Exp $"
+// #ident "@(#) $Id: libpqmodule.h,v 1.11 2005/09/26 08:08:17 ghaering Exp $"
 #ifndef Pg_LIBPQMODULE_H
 #define Pg_LIBPQMODULE_H
 #ifdef __cplusplus

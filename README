@@ -432,6 +432,9 @@ The following methods are defined by libpq:
 2.1.3.10 PgQuoteString
 ----------------------
 
+*Warning*:
+	Deprecated, use PgConnection.PgQuoteString.
+
 *Syntax*:
     s = PgQuoteString(string, forArray)
 
@@ -464,6 +467,9 @@ The following methods are defined by libpq:
 
 2.1.3.11 PgQuoteBytea
 ---------------------
+
+*Warning*:
+	Deprecated, use PgConnection.PgQuoteBytea.
 
 *Syntax*:
     s = PgQuoteBytea(string)
@@ -599,6 +605,12 @@ The PgConnection Object has the following methods:
     :lo_unlink:      Removes a PostgreSQL large object from the database.
     :trace:          Enable tracing of frontend/backend communications.
     :untrace:        Disable tracing start by the trace method.
+    :PgQuoteString:  Quotes a string, escaping any characters as
+                     needed, for use as input to a character/text
+                     field.
+    :PgQuoteBytea:   Escapes a string, which can contain NUL
+                     characters, so that it can used as an input to
+                     a bytea field.
 
 2.1.4.1.1 connectPoll (PostgreSQL 7.x and above)
 ------------------------------------------------
@@ -995,6 +1007,50 @@ The PgConnection Object has the following methods:
 
 *Note*:
     See the PostgreSQL C API documentation for details.
+
+2.1.4.1.22 PgQuoteString
+----------------------
+
+*Syntax*:
+    s = c.PgQuoteString(string, forArray)
+
+*Description*:
+    This function returns a copy of the input string with any
+	necessary characters escaped.	The string is also quoted 
+	with single quotes.
+
+	If forArray is one (1), the escaping is changed for incorporation
+	in an array literal.
+	    1.  The backslash character is double quoted.
+	    2.  The double quote (as '\"')
+	The string is also quoted with double quotes, instead of single
+	quotes.
+
+*Returns*:
+    A quoted, escaped copy of the input string.
+
+2.1.4.1.23 PgQuoteBytea
+---------------------
+
+*Syntax*:
+    s = PgQuoteBytea(string)
+
+*Description*:
+    This function returns a copy of the input string with characters
+    escaped as necessary. The string is also quoted with single quotes.
+
+	If forArray is one (1), the escaping is changed for incorporation
+	in an array literal.
+	    1.  <NUL> characters: '\\\\000' (Note: with 4 backslashes)
+	    2.  Non-printable characters: '\\\\OOO'
+	    3.  Backslashes: '\\\\\\\\' (Note: with 8 backslashes)
+	    4.  Single quote: "\'"
+	    5.  The double quote (as '\\"')
+	The string is also quoted with double quotes, instead of single
+	quotes.
+
+*Returns*:
+    A quoted, escaped copy of the input string.
 
 2.1.4.2 The PgResult Object
 ---------------------------

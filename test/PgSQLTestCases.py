@@ -95,6 +95,8 @@ import types
 import string
 from pyPgSQL import PgSQL
 
+from TestConnection import Defaults
+
 version = sys.version_info
 version = ((((version[0] * 100) + version[1]) * 100) + version[2])
 
@@ -405,7 +407,7 @@ class PgSQLTestModuleInterface(unittest.TestCase):
 
 class PgSQLTestCases(unittest.TestCase):
 	def setUp(self):
-		self.cnx = PgSQL.connect(database='template1', host='192.168.10.249')
+		self.cnx = PgSQL.connect(database='template1', host=Defaults.host, port=Defaults.port)
 		self.cur = self.cnx.cursor()
 
 	def tearDown(self):
@@ -779,7 +781,7 @@ class PgSQLTestCases(unittest.TestCase):
 
 class PgResultSetTests(unittest.TestCase):
 	def setUp(self):
-		self.cnx = PgSQL.connect(database='template1', host='192.168.10.249')
+		self.cnx = PgSQL.connect(database='template1', host=Defaults.host, port=Defaults.port )
 		self.cur = self.cnx.cursor()
 
 	def tearDown(self):
@@ -906,7 +908,7 @@ class PgResultSetTests(unittest.TestCase):
 
 class PgQuoteTests(unittest.TestCase):
 	def setUp(self):
-		self.cnx = PgSQL.connect(database='template1', host='192.168.10.249')
+		self.cnx = PgSQL.connect(database='template1', host=Defaults.host, port=Defaults.port)
 		self.cur = self.cnx.cursor()
 
 	def tearDown(self):
@@ -930,6 +932,14 @@ class PgQuoteTests(unittest.TestCase):
 			print s, res['a']
 			self.assertEquals(s, res['a'])
 
+	def query_rt_bytea(self, s):
+		self.cur.execute("select %s::bytea as a" ,s) 
+		res = self.cur.fetchone()
+		if res:
+			print s, res['a']
+			self.assertEquals(s, res['a'])
+
+			
 	def Check_string(self):
 		self.assertEquals(self.cnx.conn.PgQuoteString('string'), "E'string'")
 		self.assertEquals(self.cnx.conn.PgQuoteString('string',True), '"string"')
@@ -940,11 +950,28 @@ class PgQuoteTests(unittest.TestCase):
 		self.query_rt("str\ing")
 
 	def Check_bytea(self):
-		s = "string"
+		s = "str\x00ing"
 		b = PgSQL.PgBytea(s)
 		print self.cnx.conn.PgQuoteBytea('string')
-		self.assertEquals(b._quote(self.cnx), "E'\\\\x737472696e67'")
-		self.assertEquals(b._quote(self.cnx, True), '"\\\\x737472696e67"')
+		if self.cnx.conn.version >= '9.0':
+			self.assertEquals(b._quote(self.cnx), "E'\\\\x73747200696e67'")
+			self.assertEquals(b._quote(self.cnx, True), '"\\\\x73747200696e67"')
+		else:
+			self.assertEquals(b._quote(self.cnx), "E'str\\\\000ing'")
+			self.assertEquals(b._quote(self.cnx, True), '"str\\\\000ing"')
+			
+		# this also tests basic function of unquotebytea
+		self.query_rt_bytea(b)
+
+	def Check_deprecated_quotestring(self):
+		self.assertEquals(PgSQL.PgQuoteString('string'), "E'string'")
+		self.assertEquals(PgSQL.PgQuoteString('string',True), '"string"')
+
+	def Check_deprecated_quotebytea(self):
+		s = "st\x00ring"
+		print PgSQL.PgQuoteBytea(s)
+		self.assertEquals(PgSQL.PgQuoteBytea(s), "E'st\\\\000ring'")
+		self.assertEquals(PgSQL.PgQuoteBytea(s, True), '"st\\\\000ring"')
 
 		
 		
@@ -959,7 +986,7 @@ def suite():
 	test_suite = unittest.TestSuite((dbapi_tests, moduleinterface_tests,
 										pgsql_tests, pgresultset_tests, pgquote_tests))
 
-	test_suite = unittest.TestSuite((pgquote_tests))
+	#test_suite = unittest.TestSuite((pgquote_tests))
 	return test_suite
 
 def main():

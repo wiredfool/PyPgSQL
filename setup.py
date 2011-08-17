@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 #ident "@(#) $Id: setup.py,v 1.28 2006/06/07 17:21:28 ghaering Exp $"
-# vi:set sw=4 ts=8 showmode ai:
 #-----------------------------------------------------------------------+
 # Name:			setup.py												|
 #																		|

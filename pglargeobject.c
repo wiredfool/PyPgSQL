@@ -1,5 +1,4 @@
-#ident "@(#) $Id: pglargeobject.c,v 1.15 2003/06/17 01:36:42 ballie01 Exp $"
-/* vi:set sw=4 ts=8 showmode ai: */
+// #ident "@(#) $Id: pglargeobject.c,v 1.15 2003/06/17 01:36:42 ballie01 Exp $"
 /**(H+)*****************************************************************\
 | Name:			pglargeobject.c											|
 |																		|
@@ -29,6 +28,7 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 16AUG2011 eds reordered & removed redundant includes to kill warnings |
 | 05JUN2003 bga Change the name of the quoting function back to _quote. |
 |				__*__ type names should be restrict to system names.	|
 | 02NOV2002 bga Change the name of the quoting function to __quote__.	|
@@ -69,11 +69,9 @@
 | 06AUG2001 bga Initial release by Billy G. Allie.						|
 \*(H-)******************************************************************/
 
-#include <string.h>
-#include <stdlib.h>
+#include <Python.h>
 #include <stddef.h>
 #include <ctype.h>
-#include <Python.h>
 #include <structmember.h>
 #include <fileobject.h>
 #include "libpqmodule.h"

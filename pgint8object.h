@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pgint8object.h,v 1.7 2002/10/02 11:32:07 ghaering Exp $"
+// #ident "@(#) $Id: pgint8object.h,v 1.7 2002/10/02 11:32:07 ghaering Exp $"
 #ifndef Pg_INT8OBJECT_H
 #define Pg_INT8OBJECT_H
 #ifdef __cplusplus

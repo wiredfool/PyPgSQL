@@ -4,7 +4,11 @@ Changes since pyPgSQL Version 2.5
 =================================
 
 --Still In Progress -- changes not final yet-- 
-	
+
+Builds without warnings on ubuntu 10.04/x86. 
+
+Added Deprecation warning for using PgSQL.PgQuoteString and PgSQL.PgQuoteBytea
+
 Array quoting has changed such that a None in an array sends null to the backend
 and a Null returned from the backend returns a None in the array. 
 	
@@ -14,14 +18,12 @@ connection settings.
 
 Tests updated (Partially) for newer PG installs  (>7.3)
 	
-Added support for hex bytea encoding used in PG 9.0+
-
 Patch for a security hole in PostgreSQL (CVE-2006-2314): escaping quotes with
 backslashes is insecure.  The change is to escape single quotes with
 another single quote: \' => ''.  Thanks to Martin Pitt for the patch.
 
 
-Changes since pyPgSQL Version 2.4
+Changes since pyPgSQL Version 2.4	
 =================================
 
 Changes to README

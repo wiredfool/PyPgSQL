@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pgversion.h,v 1.1 2001/08/03 23:09:26 ballie01 Exp $"
+// #ident "@(#) $Id: pgversion.h,v 1.1 2001/08/03 23:09:26 ballie01 Exp $"
 #ifndef Pg_VERSION_H
 #define Pg_VERSION_H
 #ifdef __cplusplus

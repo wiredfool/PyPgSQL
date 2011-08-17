@@ -4,7 +4,6 @@
 /**********************************************************************
  * Get various constants for LONG_LONG and unsigned LONG_LONG defined *
  **********************************************************************/
-#include <limits.h>
 #include "Python.h"
 
 #ifdef MS_WIN32

@@ -3,10 +3,8 @@
   - See if there's some way to reduce the number of copies of the string when running 
     a bytea, since there's the original, one out of libpq, one with E' ' added, and 
     one made to return to python from C land.
-  - use pqUnquoteBytea. 
-  - return the quote functions in and make a big deprecation warning. 
   - rework the toggleShowQuery to not make an element access have side effects. 
-  
+  - Raise a warning on version < 8.x?  
    
 
 =====Done=====
@@ -14,3 +12,5 @@
     methods to ensure proper quoting. 
   - The hex encoding switch should be done automatically from the connection. 
     - Done in the libpq/PQEscapeByteaConn function. 
+  - use pqUnquoteBytea. 
+  - return the quote functions in and make a big deprecation warning. 

@@ -40,14 +40,11 @@ static const char rcsid[] =
   "$FreeBSD: src/lib/libc/stdlib/strtoull.c,v 1.5.2.1 2001/03/02 09:45:20 obrien Exp $";
 #endif
 
-#include <sys/types.h>
-
-#include <errno.h>
-#include <ctype.h>
-#include <stdlib.h>
-
 #include "Python.h"
-#include <limits.h>
+
+#include <sys/types.h>
+#include <ctype.h>
+
 #include "port.h"
 
 #if defined(HAVE_LONG_LONG_SUPPORT)

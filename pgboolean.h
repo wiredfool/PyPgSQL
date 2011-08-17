@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pgboolean.h,v 1.4 2001/08/24 22:26:00 ballie01 Exp $"
+// #ident "@(#) $Id: pgboolean.h,v 1.4 2001/08/24 22:26:00 ballie01 Exp $"
 #ifndef Pg_BOOLEAN_H
 #define Pg_BOOLEAN_H
 #ifdef __cplusplus

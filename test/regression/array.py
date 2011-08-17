@@ -46,9 +46,11 @@ import sys
 from pyPgSQL import PgSQL
 PgArray = PgSQL.PgArray
 
+from TestConnection import Defaults
+
 class ArrayTestCases(unittest.TestCase):
 	def setUp(self):
-		self.conn = PgSQL.connect(database="pypgsql", host="192.168.10.249")
+		self.conn = PgSQL.connect(database="pypgsql", host=Defaults.host, port=Defaults.port)
 		self.conn.autocommit = 1
 
 	def checkEqual(self, real, planned):

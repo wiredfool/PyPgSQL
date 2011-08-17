@@ -41,6 +41,8 @@ import unittest
 
 from pyPgSQL import PgSQL
 
+from TestConnection import Defaults
+
 # Note: This test suite requires
 # - that a database 'pypgsql' exists with encoding set to UNICODE:
 #	$ createdb pypgsql -E UNICODE
@@ -48,11 +50,11 @@ from pyPgSQL import PgSQL
 #	$ createlang plpgsql pypgsql
 
 dbname = "pypgsql"
-host = "192.168.10.249"
+
 
 class UnicodeDatabaseTestCase(unittest.TestCase):
 	def testInsertWithUtf8(self):
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("utf-8",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("utf-8",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to unicode")
 
@@ -66,7 +68,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 		self.failUnless(name == l1_text, "latin1 text from insert and select don't match")
 
 	def testInsertWithLatin1(self):
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("latin1",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("latin1",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to latin1")
 
@@ -83,7 +85,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 		text1 = unicode("Österreich-", "latin1")
 		text2 = unicode("Ungarn", "ascii")
 		
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("utf-8",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("utf-8",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to unicode")
 		cursor.execute(u"""
@@ -101,7 +103,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 		text1 = unicode("Österreich-", "latin1")
 		text2 = unicode("Ungarn", "ascii")
 		
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("latin1",))
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("latin1",))
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to latin1")
 		cursor.execute(u"""
@@ -120,7 +122,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 		text1 = unicode("Österreich-", "latin1")
 		text2 = unicode("Ungarn", "ascii")
 		
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("latin1",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("latin1",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to latin1")
 		cursor.execute(u"""
@@ -138,7 +140,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 	def __testUnicodeConversion(self, item):
 		text = unicode("Österreich", "latin1")
 
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("utf-8",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("utf-8",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to unicode")
 		cursor.execute("create temp table test (name varchar(20))")
@@ -162,7 +164,7 @@ class UnicodeDatabaseTestCase(unittest.TestCase):
 	def testPgResultSetUnicodeConversion(self):
 		text = unicode("Österreich", "latin1")
 
-		conn = PgSQL.connect(database=dbname, host=host, client_encoding=("utf-8",), unicode_results=1)
+		conn = PgSQL.connect(database=dbname, host=Defaults.host, port=Defaults.port, client_encoding=("utf-8",), unicode_results=1)
 		cursor = conn.cursor()
 		cursor.execute("set client_encoding to unicode")
 		cursor.execute("create temp table test (name varchar(20))")

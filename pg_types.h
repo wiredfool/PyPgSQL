@@ -1,4 +1,4 @@
-#ident "@(#) $Id: pg_types.h,v 1.5 2002/12/01 04:59:25 ballie01 Exp $"
+// #ident "@(#) $Id: pg_types.h,v 1.5 2002/12/01 04:59:25 ballie01 Exp $"
 #ifndef Pg_TYPES_H
 #define Pg_TYPES_H
 #ifdef __cplusplus

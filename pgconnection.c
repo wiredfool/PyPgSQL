@@ -1,5 +1,4 @@
-#ident "@(#) $Id: pgconnection.c,v 1.24 2005/09/26 08:08:17 ghaering Exp $"
-/* vi:set sw=4 ts=8 showmode ai: */
+// #ident "@(#) $Id: pgconnection.c,v 1.24 2005/09/26 08:08:17 ghaering Exp $"
 /**(H+)*****************************************************************\
 | Name:			pgconnection.c											|
 |																		|
@@ -28,6 +27,7 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 16AUG2011 eds reordered & removed redundant includes to kill warnings |
 | 15AUG2011 eds Moved PgQuote* into PgConnection to use pqQuote*conn    |
 |               functions in libpq. Fixed segfault in debug tests.      |
 | 23MAR2005 bga Change code to fix some compatability problems with		|
@@ -93,11 +93,9 @@
 | 06AUG2001 bga Initial release by Billy G. Allie.						|
 \*(H-)******************************************************************/
 
-#include <string.h>
-#include <stdlib.h>
+#include <Python.h>
 #include <stddef.h>
 #include <ctype.h>
-#include <Python.h>
 #include <structmember.h>
 #include "libpqmodule.h"
 
@@ -419,12 +417,12 @@ static char libPQquoteString_Doc[] =
     "manner\n    that is acceptable to PostgreSQL";
 
 
-static PyObject *libPQquoteString(PgConnection *self, PyObject *args)
-{
-    int error, ct_converted, addl, i, j, slen, forArray=0;
-    unsigned char *sin;
-    unsigned char *sout;
-	unsigned char *sforarray = 0;
+static PyObject *libPQquoteString(PgConnection *self, PyObject *args) {
+    int error,  addl, i, j, forArray=0;
+	size_t ct_converted, slen;
+    char *sin;
+    char *sout;
+	char *sforarray = 0;
     PyObject *result;
 	PGconn *conn;
 
@@ -453,8 +451,8 @@ static PyObject *libPQquoteString(PgConnection *self, PyObject *args)
 				break;
 			}
 		}
-		sforarray = (unsigned char *)PyMem_Malloc(slen + addl + 1); 
-		if (sforarray == (unsigned char *)NULL)
+		sforarray = (char *)PyMem_Malloc(slen + addl + 1); 
+		if (sforarray == (char *)NULL)
 			return PyErr_NoMemory();
 		for (i=0, j=0; i < slen; i++) {
 			switch (sin[i]){
@@ -474,8 +472,8 @@ static PyObject *libPQquoteString(PgConnection *self, PyObject *args)
 				
     i = (slen * 2) + 4;
 
-    sout = (unsigned char *)PyMem_Malloc(i); /* Assume every char is quoted */
-    if (sout == (unsigned char *)NULL)
+    sout = (char *)PyMem_Malloc(i); /* Assume every char is quoted */
+    if (sout == (char *)NULL)
         return PyErr_NoMemory();
     i=0;
 	if (!forArray) {
@@ -503,21 +501,21 @@ static PyObject *libPQquoteString(PgConnection *self, PyObject *args)
 /*--------------------------------------------------------------------------*/
 
 static char libPQquoteBytea_Doc[] =
-    "PgQuoteString(string, forArray) -> string\n"
+    "PgQuoteBytea(string, forArray) -> string\n"
     "    This is a helper function that will quote a Python String (that can "
     "contain embedded NUL bytes) in a manner\n    that is acceptable to "
     "PostgreSQL";
 
 static PyObject *libPQquoteBytea(PgConnection *self, PyObject *args)
 {
-	// WARNING, currently not putting quotes around the result
-    int to_length, i, slen, forArray = 0;
+    int i, slen, forArray = 0;
+	size_t to_length;
     unsigned char *sin;
 	unsigned char *sint;
     unsigned char *sout;
     PyObject *result;
 	PGconn *conn;
-
+ 
 	if (!PgConnection_check((PyObject *)self))
 		return NULL;
 
@@ -547,7 +545,6 @@ static PyObject *libPQquoteBytea(PgConnection *self, PyObject *args)
 	/* s# doesn't need a null value at the end, since it's length checked */
     result = Py_BuildValue("s#", sout, to_length + i);
 	PyMem_Free(sout);
-
 
     return result;
 }
