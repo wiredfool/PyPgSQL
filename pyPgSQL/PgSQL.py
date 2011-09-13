@@ -29,6 +29,9 @@
 #                                                                       |
 # Date      Ini Description                                             |
 # --------- --- ------------------------------------------------------- |
+# 02SEP2011 eds - Added query_params method call, a nearly drop in      |
+#                 replacement for execute. May require extra type info  |
+#                 in the query.                                         |
 # 15AUG2011 eds - Moved PgQuote* into connection object to use          |
 #                 pqQuote*conn functions in libpq. Arrays now send      |
 #                 Null for None parameters, and return None for null    |
@@ -2915,6 +2918,47 @@ _quote(value) -> string
 		else:
 			return repr(value)
 
+	def _stringify(self, value):
+		"""
+_stringify(value) -> string
+	This function transforms the Python value into a string suitable to send
+	to the PostgreSQL database in a insert or update statement.
+	Does not quote strings. Does not quote bytea. converts everything else to strings."""
+
+		if value is None:
+			return 'NULL'
+
+		if isinstance(value,PgBytea):
+			return value
+		if isinstance(value,PgOther):
+			return value.value
+		
+		try:
+			return value._quote(self.conn).replace("'",'')
+		except AttributeError:
+			pass
+
+		if type(value) is DateTimeType:
+			return "%s" % value
+		elif type(value) is DateTimeDeltaType:
+			return "%s" % dateTimeDelta2Interval(value)
+		elif isinstance(value, RelativeDateTime):
+			return "%s" % relativeDateTime2Interval(value)
+		elif isinstance(value, StringType):
+			return value
+		elif type(value) is DictType or isinstance(value, PgResultSet):
+			raise TypeError, "dictionary or PgResultSet not allowed here"
+		elif type(value) in [ListType, TupleType]:
+			if forProc:
+				raise TypeError, "lists or tuples not allowed here"
+			return "(" + \
+				   reduce(lambda x, y: x + ", " + y, tuple(map(self._quote, value))) + \
+				   ")"
+		elif isinstance(value, LongType):
+			return str(value)
+		else:
+			return repr(value)
+
 	def _procQuote(self,value):
 		return self._quote(value, True)
 
@@ -2934,6 +2978,28 @@ _quoteall(vdict)->dict
 			t = (self._quote(vdict), )
 		elif type(vdict) in [ListType, TupleType]:
 			t = tuple(map(self._quote, vdict))
+		else:
+			raise TypeError, \
+				  "argument to _quoteall must be a sequence or dictionary!"
+		
+		return t
+
+	def _stringifyall(self, vdict):
+		"""
+_stringifyall(vdict)->dict
+	Quotes all elements in a list or dictionary to make them suitable for
+	insertion."""
+
+		if type(vdict) is DictType or isinstance(vdict, PgResultSet):
+			t = {}
+			for k, v in vdict.items():
+				t[k]=self._stringify(v)
+		elif isinstance(vdict, StringType) or isinstance(vdict, UnicodeType):
+			# Note: a string is a SequenceType, but is treated as a single
+			#		entity, not a sequence of characters.
+			t = [vdict]
+		elif type(vdict) in [ListType, TupleType]:
+			t = map(self._quote, vdict)
 		else:
 			raise TypeError, \
 				  "argument to _quoteall must be a sequence or dictionary!"
@@ -3091,6 +3157,128 @@ _quoteall(vdict)->dict
 					parms = self.__unicodeConvert(parms)
 					parms = tuple(map(self._quote, self.__unicodeConvert(parms)));
 				self.res = self.conn.conn.query(_qstr % parms)
+			self._rows_ = self.res.ntuples
+			self._idx_	= 0
+			self.__dict__['rowcount'] = -1 # New query - no fetch occured yet.
+			if type(self.res) is not PgResultType:
+				self.__dict__['rowcount'] = -1
+			else:
+				self.__dict__['oidValue'] =	 self.res.oidValue
+				if self.res.resultType == RESULT_DQL:
+					pass
+				elif self.res.resultType == RESULT_DML:
+					self.__dict__['rowcount'] = self.res.cmdTuples
+				else:
+					self.__dict__['rowcount'] = -1
+		except OperationalError, msg:
+			# Uh-oh.  A fatal error occurred.  This means the current trans-
+			# action has been aborted.	Try to recover to a sane state.
+			if self.conn.inTransaction:
+				_n = len(self.conn.notices)
+				self.conn.conn.query('ROLLBACK WORK')
+				if len(self.conn.notices) != _n:
+					raise Warning, self.conn.notices.pop()
+				self.conn.__dict__["inTransaction"] = 0
+				self.conn._Connection__closeCursors()
+			raise OperationalError, msg
+		except InternalError, msg:
+			# An internal error occured.  Try to get to a sane state.
+			self.conn.__dict__["inTransaction"] = 0
+			self.conn._Connection__closeCursors_()
+			self.conn.close()
+			raise InternalError, msg
+
+		if len(self.conn.notices) != _nl:
+			_drop = self.conn.notices[-1]
+			if _drop.find('transaction is aborted') > 0:
+				raise Warning, self.conn.notices.pop()
+
+		if self.res.resultType == RESULT_DQL:
+			self.__makedesc__()
+		elif _qstr[:8] == 'DECLARE ':
+			# Ok -- we've created a cursor, we will pre-fetch the first row in
+			# order to make the description array.	Note: the first call to
+			# fetchXXX will return the pre-fetched record.
+			self.res = self.conn.conn.query('FETCH 1 FROM "%s"' % self.name)
+			self._rows_ = self.res.ntuples
+			self._idx_ = 0
+			self.__makedesc__()
+
+		if len(self.conn.notices) != _nl:
+			_drop = self.conn.notices[-1]
+			if _drop.find('transaction is aborted') > 0:
+				raise Warning, self.conn.notices.pop()
+
+	def execute_params(self, query, *parms):
+		if self.closed:
+			raise InterfaceError, "execute failed - the cursor is closed."
+
+		if self.conn is None:
+			raise Error, "connection is closed."
+
+		if self.closed == 0:
+			if re_DQL.search(query):
+				# A SELECT has already been executed with this cursor object,
+				# which means a PostgreSQL portal (may) have been opened.
+				# Trying to open another portal will cause an error to occur,
+				# so we asusme that the developer is done with the previous
+				# SELECT and reset the cursor object to it's inital state.
+				self.__reset()
+					
+		_qstr = query
+		if self.conn.autocommit:
+			pass
+		else:
+			_badQuery = (self.conn.version < 70100) and \
+						(re_DRT.search(query) or re_DRI.search(query))
+			if not self.conn.inTransaction:
+				if _badQuery:
+					pass # PostgreSQL version < 7.1 and not in transaction,
+						 # so DROP TABLE/INDEX is ok.
+				else:
+					self.conn._Connection__setupTransaction()
+
+			if re_DQL.search(query) and \
+			   not (noPostgresCursor or
+					re_IN2.search(query) or
+					re_4UP.search(query)):
+				_qstr = 'DECLARE "%s" CURSOR FOR %s' % (self.name, query)
+				self.closed = 0
+			elif _badQuery and self.conn.inTransaction:
+				raise NotSupportedError, \
+					  "DROP [TABLE|INDEX] within a transaction"
+			if not self.conn.inTransaction:
+				if _badQuery:
+					pass # not in transaction so DROP TABLE/INDEX is ok.
+				else:
+					self.conn._Connection__setupTransaction()
+
+		_nl = len(self.conn.notices)
+
+		try:
+			_qstr = self.__unicodeConvert(_qstr)
+			if len(parms) == 0:
+				# If there are no paramters, just execute the query.
+				self.res = self.conn.conn.query(_qstr)
+			else:
+				if len(parms) == 1 and \
+				   (type(parms[0]) in [DictType, ListType, TupleType] or \
+					isinstance(parms[0], PgResultSet)):
+					parms = self._stringifyall(self.__unicodeConvert(parms[0]))
+				else:
+					parms = self.__unicodeConvert(parms)
+					parms = map(self._stringify, self.__unicodeConvert(parms));
+				
+				if type(parms) is DictType:
+					field_names = parms.keys();
+					parms = [parms[k] for k in field_names] # order preserving
+					replStrings = dict([(field_names[i],"$%d" %  (i+1)) for i in range(len(parms))])
+				else:
+					replStrings = tuple(["$%d"%(i+1) for i in range(len(parms))])					
+
+				_qstr = _qstr % replStrings
+				
+				self.res = self.conn.conn.query_params(_qstr, parms)
 			self._rows_ = self.res.ntuples
 			self._idx_	= 0
 			self.__dict__['rowcount'] = -1 # New query - no fetch occured yet.
