@@ -29,6 +29,7 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 21MAY2012 eds Added support for extra parameter from notify           |
 | 16AUG2011 eds reordered & removed redundant includes to kill warnings |
 | 28MAY2003 bga Fixed a bug in the code.  The code in question use to	|
 |				work, but doesn't anymore (possible change to libpq?).	|
