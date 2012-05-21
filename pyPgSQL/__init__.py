@@ -31,4 +31,4 @@
     PERFORMANCE OF THIS SOFTWARE.
 """
 
-__version__ = "2.5.3"
+__version__ = "2.5.5"
