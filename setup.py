@@ -83,8 +83,15 @@
 #-----------------------------------------------------------------------+
 import os, os.path, sys
 
-from distutils.core import setup
-from distutils.extension import Extension
+#from distutils.core import setup
+#from distutils.extension import Extension
+
+from setuptools import setup, Extension
+from setuptools.dist import Distribution
+
+class BinaryDistribution(Distribution):
+    def is_pure(self):
+        return False
 
 __version__ = "2.5.5"
 
@@ -113,12 +120,6 @@ def main():
 		library_dirs[0] = library_dirs[0] + "/ms"
 		optional_libs = ["libpq", "wsock32", "advapi32"]
 		modname="pyPgSQL.libpq.libpq"
-
-	# patch distutils if it can't cope with the "classifiers" keyword
-	if sys.version < '2.2.3':
-		from distutils.dist import DistributionMetadata
-		DistributionMetadata.classifiers = None
-		DistributionMetadata.download_url = None
 
 	classifiers = [
 		"Development Status :: 5 - Production/Stable",
@@ -150,7 +151,9 @@ def main():
 			runtime_library_dirs = pypgsql_rt_dirs,
 			libraries = optional_libs
 			)],
-		classifiers = classifiers
+		classifiers = classifiers,
+		include_package_data=True,
+		distclass=BinaryDistribution
 	)
 
 if __name__ == "__main__":
