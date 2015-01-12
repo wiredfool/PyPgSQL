@@ -1427,10 +1427,10 @@ static char PgConnection_Type_Doc[] = "This is the type of PgConnection objects"
 
 PyTypeObject PgConnection_Type = {
 	PyObject_HEAD_INIT(NULL)
-	(int)NULL,							/* ob_size				*/
+	(Py_ssize_t)NULL,							/* ob_size				*/
 	MODULE_NAME ".PgConnection",		/* tp_name				*/
 	sizeof(PgConnection),				/* tp_basicsize			*/
-	(int)NULL,							/* tp_itemsize			*/
+	(Py_ssize_t)NULL,							/* tp_itemsize			*/
 	(destructor)PgConnection_dealloc,	/* tp_dealloc			*/
 	(printfunc)NULL,					/* tp_print				*/
 	(getattrfunc)PgConnection_getattr,	/* tp_getattr			*/
@@ -1443,7 +1443,7 @@ PyTypeObject PgConnection_Type = {
 	(hashfunc)NULL,						/* tp_hash				*/
 	(ternaryfunc)NULL,					/* tp_call				*/
 	(reprfunc)NULL,						/* tp_str				*/
-	NULL, NULL, NULL, (int)NULL,
+	NULL, NULL, NULL, (Py_ssize_t)NULL,
 	PgConnection_Type_Doc
 };												  
 

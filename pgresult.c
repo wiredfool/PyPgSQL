@@ -953,10 +953,10 @@ static char PgResult_Type_Doc[] = "This is the type of PgResult objects";
 
 PyTypeObject PgResult_Type = {
 	PyObject_HEAD_INIT(NULL)
-	(int)NULL,							/*ob_size*/
+	(Py_ssize_t)NULL,							/*ob_size*/
 	MODULE_NAME ".PgResult",			/*tp_name*/
 	sizeof(PgResult),					/*tp_basicsize*/
-	(int)NULL,							/*tp_itemsize*/
+	(Py_ssize_t)NULL,							/*tp_itemsize*/
 	(destructor)PgResult_dealloc,		/*tp_dealloc*/
 	(printfunc)NULL,					/*tp_print*/
 	(getattrfunc)PgResult_getattr,		/*tp_getattr*/
@@ -969,7 +969,7 @@ PyTypeObject PgResult_Type = {
 	(hashfunc)NULL,						/*tp_hash*/
 	(ternaryfunc)NULL,					/*tp_call*/
 	(reprfunc)NULL,						/*tp_str*/
-	NULL, NULL, NULL, (int)NULL,
+	NULL, NULL, NULL, (Py_ssize_t)NULL,
 	PgResult_Type_Doc
 };
 

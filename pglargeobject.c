@@ -1317,10 +1317,10 @@ static char PgLargeObject_Type_Doc[] = "This is the type of PgLargeObjects";
 
 PyTypeObject PgLargeObject_Type = {
 	PyObject_HEAD_INIT(NULL)
-	(int)NULL,							/* ob_size */
+	(Py_ssize_t)NULL,							/* ob_size */
 	MODULE_NAME ".PgLargeObject",		/* tp_name */
 	sizeof(PgLargeObject),				/* tp_basicsize */
-	(int)NULL,							/* tp_itemsize */
+	(Py_ssize_t)NULL,							/* tp_itemsize */
 	(destructor)PgLargeObject_dealloc,	/* tp_dealloc */
 	(printfunc)NULL,					/* tp_print */
 	(getattrfunc)PgLargeObject_getattr, /* tp_getattr */
@@ -1333,7 +1333,7 @@ PyTypeObject PgLargeObject_Type = {
 	(hashfunc)NULL,						/* tp_hash */
 	(ternaryfunc)NULL,					/*tp_call*/
 	(reprfunc)PgLargeObject_prnt,		/*tp_str*/
-	NULL, NULL, NULL, (int)NULL,
+	NULL, NULL, NULL, (Py_ssize_t)NULL,
 	PgLargeObject_Type_Doc
 };
 

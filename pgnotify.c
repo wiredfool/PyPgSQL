@@ -136,10 +136,10 @@ static char PgNotify_Type_Doc[] = "This is the type of PgNotify objects";
 
 PyTypeObject PgNotify_Type = {
 	PyObject_HEAD_INIT(NULL)
-	(int)NULL,							/*ob_size*/
+	(Py_ssize_t)NULL,							/*ob_size*/
 	MODULE_NAME ".PgNotify",			/*tp_name*/
 	sizeof(PgNotify),					/*tp_basicsize*/
-	(int)NULL,							/*tp_itemsize*/
+	(Py_ssize_t)NULL,							/*tp_itemsize*/
 	(destructor)PgNotify_dealloc,		/*tp_dealloc*/
 	(printfunc)NULL,					/*tp_print*/
 	(getattrfunc)PgNotify_getattr,		/*tp_getattr*/
@@ -152,7 +152,7 @@ PyTypeObject PgNotify_Type = {
 	(hashfunc)NULL,						/*tp_hash*/
 	(ternaryfunc)NULL,					/*tp_call*/
 	(reprfunc)NULL,						/*tp_str*/
-	NULL, NULL, NULL, (int)NULL,
+	NULL, NULL, NULL, (Py_ssize_t)NULL,
 	PgNotify_Type_Doc
 };
 
