@@ -93,7 +93,7 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
-__version__ = "2.5.5"
+__version__ = "2.5.6"
 
 # Define the runtime library path for this module.	It starts out as None.
 
