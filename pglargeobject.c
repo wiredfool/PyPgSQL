@@ -1118,9 +1118,10 @@ static char PgLo_writelines_Doc[] =
 
 static PyObject *PgLo_writelines(PgLargeObject *self, PyObject *args) {
 	PyObject	*list, *item;
-	PyObject	*(*getitem)(PyObject *, int);
+	PyObject	*(*getitem)(PyObject *, Py_ssize_t);
 	PGconn		*cnx;
-	int			fd, size, lsize, i;
+	int			fd;
+    Py_ssize_t  size, lsize, i;
 	char		*buf;
 
 	if (!PgLargeObject_check((PyObject *)self, PGRES_LO_OPENED|PGRES_LO_WRITE))
@@ -1183,7 +1184,7 @@ static PyObject *PgLo_writelines(PgLargeObject *self, PyObject *args) {
 		buf = PyString_AsString(item);
 		size = PyString_Size(item);
 
-		if ((lo_write(cnx, fd, buf, size)) < size)
+		if ((lo_write(cnx, fd, buf, (size_t)size)) < size)
 		{
 			PyErr_SetString(PyExc_IOError, "error writing to PgLargeObject");
 			return (PyObject *)NULL;

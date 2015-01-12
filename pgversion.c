@@ -429,14 +429,14 @@ static int PgVersion_setattr(PgVersion *self, char* attr, PyObject *value)
 
 /*--------------------------------------------------------------------------*/
 
-static int PgVersion_length(PgVersion *self)
+static Py_ssize_t PgVersion_length(PyObject *self)
 {
 	return 5;
 }
 
 /*--------------------------------------------------------------------------*/
 
-static PyObject *PgVersion_getitem(PgVersion *self, PyObject *attr)
+static PyObject *PgVersion_getitem(PyObject *self, PyObject *attr)
 {
 	char *key;
 	PyObject *value;
@@ -456,23 +456,6 @@ static PyObject *PgVersion_getitem(PgVersion *self, PyObject *attr)
 }
 
 /*--------------------------------------------------------------------------*/
- 
-static int PgVersion_setitem(PgVersion *self, PyObject *attr, PyObject *value)
-{
-	if (value == NULL)
-	{
-		PyErr_SetString(PyExc_AttributeError, 
-						"can't delete PgVersion attributes");
-	}
-	else
-	{
-		PyErr_SetString(PyExc_AttributeError, 
-						"PgVersion attributes are read-only");
-	}
-	return -1;	 
-}
-
-/*--------------------------------------------------------------------------*/
 
 static int PgVersion_cmp(PgVersion *s, PgVersion *o)
 {
@@ -485,9 +468,9 @@ static int PgVersion_cmp(PgVersion *s, PgVersion *o)
 /*--------------------------------------------------------------------------*/
 
 static PyMappingMethods ver_as_mapping = {
-		(inquiry)PgVersion_length,				/*mp_length*/
+		PgVersion_length,				/*mp_length*/
 		(binaryfunc)PgVersion_getitem,			/*mp_subscript*/
-		(objobjargproc)PgVersion_setitem,		/*mp_ass_subscript*/
+		(objobjargproc)NULL,		            /*mp_ass_subscript*/
 };
 
 /*--------------------------------------------------------------------------*/
