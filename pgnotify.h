@@ -36,6 +36,7 @@ typedef struct {
     PyObject_HEAD
     PyObject *relname;	/* The name of the relation containing data     */
     PyObject *be_pid;	/* The process ID of the notifing backend	*/
+    PyObject *extra;	/* The Extra data sent with the notification	*/
 } PgNotify;
 
 /***********************************************************************\

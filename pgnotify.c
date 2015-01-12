@@ -29,6 +29,7 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 21MAY2012 eds Added support for extra parameter from notify           |
 | 16AUG2011 eds reordered & removed redundant includes to kill warnings |
 | 28MAY2003 bga Fixed a bug in the code.  The code in question use to	|
 |				work, but doesn't anymore (possible change to libpq?).	|
@@ -66,11 +67,13 @@ PyObject *PgNotify_New(PGnotify *note)
 	{
 		self->relname = Py_BuildValue("s", note->relname);
 		self->be_pid = Py_BuildValue("i", note->be_pid);
+		self->extra = Py_BuildValue("s", note->extra);
 		free(note);
 		if (PyErr_Occurred())
 		{
 			Py_XDECREF(self->relname);
 			Py_XDECREF(self->be_pid);
+			Py_XDECREF(self->extra);
 			PyObject_Del(self);
 			return (PyObject *)NULL;
 		}
@@ -83,6 +86,7 @@ static void PgNotify_dealloc(PgNotify *self)
 {
 	Py_XDECREF(self->relname);
 	Py_XDECREF(self->be_pid);
+	Py_XDECREF(self->extra);
 
 	PyObject_Del((PyObject *)self);
 }
@@ -109,6 +113,7 @@ static PyObject *PgNotify_repr(PgNotify *self)
 static struct memberlist PgNotify_members[] = {
 	{ "relname",   T_OBJECT,	NoOFF(relname),			RO },
 	{ "be_pid",	   T_OBJECT,	NoOFF(be_pid),			RO },
+	{ "extra",	   T_OBJECT,	NoOFF(extra),			RO },
 	{ NULL												   }
 };
 

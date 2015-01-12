@@ -1439,6 +1439,7 @@ the PgConnection class.  It provides the following read-only attributes:
     :relname:  The name of the relation containing data.
     :be_pid:   The process ID of the PostgreSQL backend sending the
                notification.
+    :extra:    The optional extra data sent with the notification
 
 2.1.4.5 The PgVersion Object
 ----------------------------

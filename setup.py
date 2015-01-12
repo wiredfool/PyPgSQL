@@ -86,7 +86,7 @@ import os, os.path, sys
 from distutils.core import setup
 from distutils.extension import Extension
 
-__version__ = "2.5.4"
+__version__ = "2.5.5"
 
 # Define the runtime library path for this module.	It starts out as None.
 
