@@ -1,3 +1,6 @@
+
+import os
+
 class Defaults:
-	host = '192.168.10.249'
-	port = '5433'
+	host = os.environ.get('PG_HOST','/var/run/postgresql')
+	port = os.environ.get('PG_PORT','5432')

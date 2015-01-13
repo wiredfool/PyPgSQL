@@ -1,0 +1,32 @@
+language: python
+python:
+#  - "3.4"
+  - "2.7"
+#  - "2.6"
+
+env: 
+  - POSTGRESQL_VERSION=9.1
+#  - POSTGRESQL_VERSION=9.3
+
+addons:
+  postgresql: "9.1"
+
+install: 
+  - "pip install -r requirements.txt"
+  - "python setup.py install"
+
+before_script:
+  - psql -c 'create database pypgsql;' -U postgres
+
+script:  
+  - "cd test && python PgSQLTestCases.py"
+  - "cd regression"
+  - "python array.py"
+  - "python pgconnection.py"
+  - "python pgresult.py"
+  - "python pgversion.py"
+  - "python unicode_tests.py"
+
+
+sudo: false
+
