@@ -5,20 +5,22 @@ python:
 #  - "2.6"
 
 env: 
+  - POSTGRESQL_VERSION=9.0
   - POSTGRESQL_VERSION=9.1
-#  - POSTGRESQL_VERSION=9.3
-
-addons:
-  postgresql: "9.1"
+  - POSTGRESQL_VERSION=9.2
+  - POSTGRESQL_VERSION=9.3
+  - POSTGRESQL_VERSION=9.4
 
 install: 
   - "pip install -r requirements.txt"
   - "python setup.py install"
 
 before_script:
-  - psql -c 'create database pypgsql;' -U postgres
+  - ".travis/install_postgresql.sh"
 
 script:  
+  - "export PG_PORT=`pg_lsclusters -h | grep $POSTGRESQL_VERSION | cut -d ' ' -f 3`"
+  - "echo $PG_PORT"
   - "cd test && python PgSQLTestCases.py"
   - "cd regression"
   - "python array.py"
@@ -28,5 +30,4 @@ script:
   - "python unicode_tests.py"
 
 
-sudo: false
 
