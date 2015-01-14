@@ -206,8 +206,8 @@ static char libPQquoteBytea_Doc[] =
     "PostgreSQL";
 
 static PyObject *libPQquoteBytea(PyObject *self, PyObject *args){
-    int i, forArray = 0;
-	size_t slen, to_length;
+    int i, slen, forArray = 0;
+    size_t to_length;
     unsigned char *sin;
 	unsigned char *sint;
     unsigned char *sout;
@@ -221,7 +221,7 @@ static PyObject *libPQquoteBytea(PyObject *self, PyObject *args){
 
 	sint = PQescapeBytea(sin, slen, &to_length);
 
-	if (slen && !to_length) {
+	if ((slen && !to_length) || (to_length + 4) > INT_MAX) {
 		/* error handling here is more of a guess than in the *conn methods */
 	    PyErr_SetString(PqErr_DataError,"PQescapeBytea failed");
 		if (sint) {
@@ -232,6 +232,7 @@ static PyObject *libPQquoteBytea(PyObject *self, PyObject *args){
 
     sout = (unsigned char *)PyMem_Malloc(to_length + 4);
     if (sout == (unsigned char *)NULL){
+        PQfreemem(sint);
         return PyErr_NoMemory();
 	}
 
@@ -247,7 +248,7 @@ static PyObject *libPQquoteBytea(PyObject *self, PyObject *args){
 	sout[to_length + i -1] = (forArray ? '"' : '\''); 
 
 	/* s# doesn't need a null value at the end, since it's length checked */
-    result = Py_BuildValue("s#", sout, to_length + i);
+    result = Py_BuildValue("s#", sout, (int)(to_length + i));
 	PyMem_Free(sout);
 
     return result;
