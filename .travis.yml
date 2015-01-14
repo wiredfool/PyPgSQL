@@ -16,7 +16,7 @@ install:
   - "python setup.py install"
 
 before_script:
-  - ".travis/install_postgresql.sh"
+  - ".travis/install_postgres.sh"
 
 script:  
   - "export PG_PORT=`pg_lsclusters -h | grep $POSTGRESQL_VERSION | cut -d ' ' -f 3`"
