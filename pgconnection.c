@@ -27,6 +27,7 @@
 |																		|
 | Date		Ini Description												|
 | --------- --- ------------------------------------------------------- |
+| 02SEP2011 eds Added libPQexecParams/query_params                      |
 | 16AUG2011 eds reordered & removed redundant includes to kill warnings |
 | 15AUG2011 eds Moved PgQuote* into PgConnection to use pqQuote*conn    |
 |               functions in libpq. Fixed segfault in debug tests.      |
@@ -408,6 +409,160 @@ static PyObject *libPQexec(PgConnection *self, PyObject *args)
 
 	return PgResult_New(res, self, rtype);
 }
+
+/*--------------------------------------------------------------------------*/
+
+static char libPQexecParams_Doc[] =
+	"query() -- Submit a parameterized query and wait for the result(s).";
+
+static PyObject *libPQexecParams(PgConnection *self, PyObject *args)
+{
+	PGresult	*res;
+	char		*query;
+	int			rtype;
+	PyObject    *py_params;
+	char        **paramValues;
+	int         nParams;
+	int         *paramLengths;
+	int         *paramFormats;
+	int         i;
+
+	if (!PgConnection_check((PyObject *)self)){
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args,"sO:query", &query, &py_params)) {
+		return NULL;
+	}
+
+	if (!PyList_Check(py_params)) {
+		// undone, check error type
+		PyErr_SetString(PqErr_InternalError, "Params must be a list");
+		return NULL;
+	}
+
+	nParams = (int)PyList_Size(py_params);
+	if (!nParams){
+		paramValues = NULL;
+		paramLengths = NULL;
+		paramFormats = NULL;
+	} else {
+		paramValues = PyMem_Malloc(sizeof(char *)*nParams);
+		if (!paramValues) {
+			return PyErr_NoMemory();
+		}
+		paramLengths = PyMem_Malloc(sizeof(int)*nParams);
+		if (!paramLengths) {
+			PyMem_Free(paramValues);
+			return PyErr_NoMemory();
+		}
+		paramFormats = PyMem_Malloc(sizeof(int)*nParams);
+		if (!paramValues) {
+			PyMem_Free(paramLengths);
+			PyMem_Free(paramValues);
+			return PyErr_NoMemory();
+		}
+		
+		PyObject *elt;
+		for (i=0;i<nParams;i++){
+			// List can be unquoted/escaped strings or 
+			// pgBytea objects, or text format numbers &c.
+			elt = PyList_GetItem(py_params, (Py_ssize_t)i);
+			if (PyString_Check(elt)){
+				// we've got a string or text version of a number
+				paramValues[i] = PyString_AsString(elt); // nul terminiated, borrowed.
+				paramLengths[i] = 0; // ignored
+				paramFormats[i] = 0; // text format
+			} else if (PyObject_HasAttrString(elt,"value")){
+				PyObject *bytea_str = PyObject_GetAttrString(elt, "value");
+				int ret;
+				Py_ssize_t length;
+
+				if (!PyString_Check(bytea_str)){
+					// barf
+					PyMem_Free(paramLengths);
+					PyMem_Free(paramValues);
+					PyMem_Free(paramFormats);
+					return NULL;
+				}
+				ret = PyString_AsStringAndSize(bytea_str, &paramValues[i], &length);
+				paramLengths[i] = (int) length;
+				paramFormats[i] = 1;
+				Py_XDECREF(bytea_str);
+				if (ret == -1){
+					//typeerror
+					PyMem_Free(paramLengths);
+					PyMem_Free(paramValues);
+					PyMem_Free(paramFormats);
+					return NULL;
+				}	
+			}
+		}
+	}
+
+	
+	if (PyString_Check(self->debug) && (self->debug != Py_None)) {
+		// UNDONE some test cases aren't Py_None, yet they're not strings. 
+		// Unclear why, but a little extra guarding doesn't hurt. 
+		if (debugQuery(PyString_AsString(self->debug), query) == NULL)
+			return NULL;
+	}
+
+
+	
+
+
+	Py_BEGIN_ALLOW_THREADS
+	res = PQexecParams(PgConnection_Get(self), 
+					   query,
+					   nParams,
+					   NULL, /*paramTypes, in oid*/
+					   (const char * const*) paramValues,
+					   paramLengths, /* for binary parameters, ignored for text. */
+					   paramFormats, /* 0 = text, 1=binary */
+					   0); /* 0 text format returned, 1 for binary */
+	Py_END_ALLOW_THREADS
+
+	
+
+	if ((rtype = getResultType(res)) == RESULT_ERROR)
+	{
+		PyObject *exc;
+		char *errmsg = PQerrorMessage(PgConnection_Get(self));
+
+		switch (PQresultStatus(res))
+		{
+			case PGRES_NONFATAL_ERROR:
+				exc = PqErr_ProgrammingError;	/* Barrowed reference */
+				break;
+
+			case PGRES_FATAL_ERROR:
+				/* Check to see if a referential integrity error occured and
+				 * set the appropiate exception. */
+				if (strstr(errmsg, "referential integrity violation") != NULL)
+					exc = PqErr_IntegrityError;	  /* Barrowed reference */
+				else
+					exc = PqErr_OperationalError; /* Barrowed reference */
+				break;
+
+			default:
+				exc = PqErr_InternalError;		/* Barrowed reference */
+		}
+
+		PyErr_SetString(exc, errmsg);
+		PQclear(res);
+		return NULL;
+	}
+
+	if (paramValues){
+		PyMem_Free(paramLengths);
+		PyMem_Free(paramValues);
+		PyMem_Free(paramFormats);
+	}
+
+	return PgResult_New(res, self, rtype);
+}
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -1271,6 +1426,7 @@ static PyMethodDef PgConnection_methods[] = {
 	{"notifies", (PyCFunction)libPQnotifies, 1, libPQnotifies_Doc},
 	{"putline", (PyCFunction)libPQputline, 1, libPQputline_Doc},
 	{"query", (PyCFunction)libPQexec, 1, libPQexec_Doc},
+	{"query_params", (PyCFunction)libPQexecParams, 1, libPQexecParams_Doc},
 	{"requestCancel",(PyCFunction)libPQrequestCancel,1,libPQrequestCancel_Doc},
 	{"reset", (PyCFunction)libPQreset, 1, libPQreset_Doc},
 	{"sendQuery", (PyCFunction)libPQsendQuery, 1, libPQsendQuery_Doc},
