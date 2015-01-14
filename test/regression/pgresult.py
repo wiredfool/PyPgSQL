@@ -57,7 +57,7 @@ version = sys.version_info
 version = ((((version[0] * 100) + version[1]) * 100) + version[2])
 
 # Get a connection and a version string to be used globally.
-cnx = libpq.PQconnectdb("dbname=pypgsql host=%s"% Defaults.host)
+cnx = libpq.PQconnectdb("dbname=pypgsql host=%s port=%s"% (Defaults.host, Defaults.port))
 vstr = "%(major)d.%(minor)d" % cnx.version
 
 class PgResultMemberTestCases(unittest.TestCase):
