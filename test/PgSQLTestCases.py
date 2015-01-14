@@ -32,7 +32,7 @@
 #																		|
 # Date		Ini Description												|
 # --------- --- ------------------------------------------------------- |
-# 15AUG2011 eds Added tests for Connection based quoting                |
+# 15AUG2011 eds Added tests for Connection based quoting				|
 # 02JUN2006 gh	Adjusted test suite to patch #882032.					|
 # 01JUN2006 gh	Slimmed down tests to make them work with recent Python |
 #				and PostgreSQL releases.								|
@@ -905,6 +905,30 @@ class PgResultSetTests(unittest.TestCase):
 		if v != 6:
 			self.fail("Wrong result for get [4]")
 
+class setting(object):
+	def __init__(self, cur, setting, value):
+		self.cur = cur
+		self.setting = setting
+		self.value = value
+		self.initial = self._get(setting) 
+		if self.initial == value:
+			return
+		self._set(setting, value)
+
+	def __enter__(self):
+		return self
+	
+	def __exit__(self, type, value, traceback):
+		if self.initial != self.value:
+			self._set(self.setting, self.initial)					 
+		
+	def _get(self, setting):
+		self.cur.execute('show %s' % setting)
+		res = self.cur.fetchone()
+		return res.values()[0] == 'on'
+	
+	def _set(self, setting, value):
+		self.cur.execute('set %s to %s' % (setting, '%s'), (value and 'on' or 'off'))
 
 class PgQuoteTests(unittest.TestCase):
 	def setUp(self):
@@ -938,10 +962,14 @@ class PgQuoteTests(unittest.TestCase):
 		if res:
 			print s, res['a']
 			self.assertEquals(s, res['a'])
-
 			
 	def Check_string(self):
-		self.assertEquals(self.cnx.conn.PgQuoteString('string'), "E'string'")
+		
+		with setting(self.cur, 'standard_conforming_strings', False):
+			self.assertEquals(self.cnx.conn.PgQuoteString('string'), "E'string'")
+		with setting(self.cur, 'standard_conforming_strings', True):
+			self.assertEquals(self.cnx.conn.PgQuoteString('string'), "'string'")
+			
 		self.assertEquals(self.cnx.conn.PgQuoteString('string',True), '"string"')
 		self.query_rt('strin\g')
 		self.query_rt('stri\\ng')
@@ -953,7 +981,18 @@ class PgQuoteTests(unittest.TestCase):
 		s = "str\x00ing"
 		b = PgSQL.PgBytea(s)
 		print self.cnx.conn.PgQuoteBytea('string')
-		if self.cnx.conn.version >= '9.0':
+		if self.cnx.conn.version >= '9.1':			  
+			# standard conforming strings make a difference
+
+			with setting(self.cur, 'standard_conforming_strings', True):
+				self.assertEquals(b._quote(self.cnx), "'\\x73747200696e67'")
+				self.assertEquals(b._quote(self.cnx, True), '"\\x73747200696e67"')
+
+			with setting(self.cur, 'standard_conforming_strings', False):
+				self.assertEquals(b._quote(self.cnx), "E'\\\\x73747200696e67'")
+				self.assertEquals(b._quote(self.cnx, True), '"\\\\x73747200696e67"')
+
+		elif self.cnx.conn.version >= '9.0':
 			self.assertEquals(b._quote(self.cnx), "E'\\\\x73747200696e67'")
 			self.assertEquals(b._quote(self.cnx, True), '"\\\\x73747200696e67"')
 		else:
@@ -970,8 +1009,13 @@ class PgQuoteTests(unittest.TestCase):
 	def Check_deprecated_quotebytea(self):
 		s = "st\x00ring"
 		print PgSQL.PgQuoteBytea(s)
-		self.assertEquals(PgSQL.PgQuoteBytea(s), "E'st\\\\000ring'")
-		self.assertEquals(PgSQL.PgQuoteBytea(s, True), '"st\\\\000ring"')
+		if self.cnx.conn.version >= '9.1':
+			# still wrong -- this one is never going to be right.
+			self.assertEquals(PgSQL.PgQuoteBytea(s), "E'st\\000ring'")
+			self.assertEquals(PgSQL.PgQuoteBytea(s, True), '"st\\000ring"')
+		else:
+			self.assertEquals(PgSQL.PgQuoteBytea(s), "E'st\\\\000ring'")
+			self.assertEquals(PgSQL.PgQuoteBytea(s, True), '"st\\\\000ring"')
 
 		
 		

@@ -566,6 +566,11 @@ static PyObject *libPQexecParams(PgConnection *self, PyObject *args)
 
 /*--------------------------------------------------------------------------*/
 
+static int _pqget_std_strings(const PGconn *conn) {
+    return strcmp(PQparameterStatus(conn, "standard_conforming_strings"), "on") == 0;
+}
+
+
 static char libPQquoteString_Doc[] =
     "PgQuoteString(string) -> string\n"
     "    This is a helper function that will quote a Python String in a "
@@ -631,7 +636,8 @@ static PyObject *libPQquoteString(PgConnection *self, PyObject *args) {
     if (sout == (char *)NULL)
         return PyErr_NoMemory();
     i=0;
-	if (!forArray) {
+
+	if (!forArray && !_pqget_std_strings(conn)) {
 		sout[i++] = 'E';
 	}
     sout[i++] = (forArray ? '"' : '\'');
@@ -681,13 +687,23 @@ static PyObject *libPQquoteBytea(PgConnection *self, PyObject *args)
 
 	sint = PQescapeByteaConn(conn, sin, slen, &to_length);
 
+	if ((slen && !to_length) || (to_length + 4) > INT_MAX) {
+		/* error handling here is more of a guess than in the *conn methods */
+	    PyErr_SetString(PqErr_DataError,"PQescapeByteaConn failed");
+		if (sint) {
+			PQfreemem(sint);
+		}
+		return (PyObject *)NULL;
+	}
+
     sout = (unsigned char *)PyMem_Malloc(to_length + 4);
     if (sout == (unsigned char *)NULL){
+        PQfreemem(sint);
         return PyErr_NoMemory();
 	}
 
 	i = 0;
-	if (!forArray) {
+	if (!forArray && !_pqget_std_strings(conn)) {
 		sout[i++] = 'E';
 	}
     sout[i++] = (forArray ? '"' : '\'');
