@@ -1018,7 +1018,67 @@ class PgQuoteTests(unittest.TestCase):
 			self.assertEquals(PgSQL.PgQuoteBytea(s, True), '"st\\\\000ring"')
 
 		
+
+class PgReTests(unittest.TestCase):
+	def test_begin(self):
+		self.assert_(PgSQL.re_BEGIN.match('BEGIN'))
+		self.assert_(PgSQL.re_BEGIN.match('BEGIN;'))
+		self.assert_(PgSQL.re_BEGIN.match('BEGIN WORK'))
+		match = PgSQL.re_BEGIN.match('BEGIN TRANSACTION')
+		self.assert_(match)
+		self.assert_(match.group(1), " TRANSACTION")
+		self.assertFalse(match.group(4))
+		self.assertFalse(match.group('extra'))
+		self.assert_(PgSQL.re_BEGIN.match('begin'))
+
+		self.assert_(PgSQL.re_BEGIN.match(' BEGIN TRANSACTION'))
+		self.assert_(PgSQL.re_BEGIN.match('BEGIN TRANSACTION ISOLATION LEVEL serializable'))
+		match = PgSQL.re_BEGIN.match('BEGIN TRANSACTION ISOLATION LEVEL serializable')
+		self.assertEqual(match.group(4),
+						 "ISOLATION LEVEL serializable")
+		self.assertEqual(match.group('extra'),
+						 "ISOLATION LEVEL serializable")
+		self.assertFalse(PgSQL.re_BEGIN.match('; begin'))
+		self.assertFalse(PgSQL.re_BEGIN.match('commit'))
 		
+	def test_commit(self):
+		self.assert_(PgSQL.re_COMMIT.match('commit'))
+		self.assert_(PgSQL.re_COMMIT.match('commit;'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT WORK'))
+		self.assert_(PgSQL.re_COMMIT.match(' COMMIT WORK'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT  WORK'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT  WORK;'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT TRANSACTION'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT  TRANSACTION'))
+		self.assert_(PgSQL.re_COMMIT.match('COMMIT TRANSACTION;'))
+		match = PgSQL.re_COMMIT.match(' COMMIT TRANSACTION');
+		self.assert_(match)
+		self.assertEquals(match.group(1), 'TRANSACTION');
+
+		self.assertFalse(PgSQL.re_COMMIT.match('BEGIN'))
+		self.assertFalse(PgSQL.re_COMMIT.match('--commit'))
+		self.assertFalse(PgSQL.re_COMMIT.match(';commit'))
+
+	def test_rollback(self):
+		self.assert_(PgSQL.re_ROLLBACK.match('rollback'))
+		self.assert_(PgSQL.re_ROLLBACK.match('rollback;'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK WORK'))
+		self.assert_(PgSQL.re_ROLLBACK.match(' ROLLBACK WORK'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK  WORK'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK  WORK;'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK TRANSACTION'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK  TRANSACTION'))
+		self.assert_(PgSQL.re_ROLLBACK.match('ROLLBACK TRANSACTION;'))
+		match = PgSQL.re_ROLLBACK.match(' ROLLBACK TRANSACTION');
+		self.assert_(match)
+		self.assertEquals(match.group(1), 'TRANSACTION');
+
+		self.assertFalse(PgSQL.re_ROLLBACK.match('BEGIN'))
+		self.assertFalse(PgSQL.re_ROLLBACK.match('--rollback'))
+		self.assertFalse(PgSQL.re_ROLLBACK.match(';rollback'))
+
 
 def suite():
 	dbapi_tests = unittest.makeSuite(DBAPICompliance, "Check")
@@ -1026,9 +1086,11 @@ def suite():
 	pgsql_tests = unittest.makeSuite(PgSQLTestCases, "Check")
 	pgresultset_tests = unittest.makeSuite(PgResultSetTests, "Check")
 	pgquote_tests = unittest.makeSuite(PgQuoteTests, "Check")
+	pgre_tests = unittest.makeSuite(PgReTests, "test")
 
 	test_suite = unittest.TestSuite((dbapi_tests, moduleinterface_tests,
-										pgsql_tests, pgresultset_tests, pgquote_tests))
+									 pgsql_tests, pgresultset_tests,
+									 pgquote_tests, pgre_tests))
 
 	#test_suite = unittest.TestSuite((pgquote_tests))
 	return test_suite

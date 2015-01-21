@@ -487,6 +487,30 @@ re_DRI = re.compile('[\s]*DROP[\s]+INDEX[\s]', re.I)
 re_4UP = re.compile('[\s]FOR[\s]+UPDATE', re.I)
 re_IN2 = re.compile('[\s]INTO[\s]', re.I)
 
+"""
+Syntax:
+BEGIN [ WORK | TRANSACTION ] [ transaction_mode [, ...] ]
+
+where transaction_mode is one of:
+
+    ISOLATION LEVEL { SERIALIZABLE | REPEATABLE READ | READ COMMITTED | READ UNCOMMITTED }
+    READ WRITE | READ ONLY
+    [ NOT ] DEFERRABLE
+
+Entire command, BEGIN, optionally by WORK|TRANSACTION, then other stuff, and maybe ;
+"""
+re_BEGIN = re.compile('^[\s]*BEGIN[\s]?([\s]*(WORK)|(TRANSACTION))?[\s]*(?P<extra>[^;]*?);?[\s]*$', re.I)
+
+"""
+Syntax:
+COMMIT [ WORK | TRANSACTION ]
+
+Entire command, Commit, WORK|TRANSACTION and maybe ;
+"""
+re_COMMIT = re.compile('^[\s]*COMMIT[\s]*((WORK)|(TRANSACTION))?[\s]*;?[\s]*$', re.I)
+re_ROLLBACK = re.compile('^[\s]*ROLLBACK[\s]*((WORK)|(TRANSACTION))?[\s]*;?[\s]*$', re.I)
+
+
 replace = string.replace
 
 #-----------------------------------------------------------------------+
