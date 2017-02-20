@@ -19,6 +19,8 @@ clean:
 
 test:
 	cd test && python PgSQLTestCases.py
+
+regression:
 	cd test/regression && python array.py
 	cd test/regression && python pgconnection.py
 	cd test/regression && python pgresult.py

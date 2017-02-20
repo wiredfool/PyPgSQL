@@ -2470,12 +2470,12 @@ class Connection:
 			if getrefcount(i) < 5:
 				i.close()
 
-	def __setupTransaction(self):
+	def __setupTransaction(self, query='BEGIN'):
 		"""
 	__setupTransaction()
 		Internal routine that will set up a transaction for this connection.\n"""
-		self.conn.query("BEGIN WORK")
-		if self.TransactionLevel != "":
+		self.conn.query(query)
+		if self.TransactionLevel != "" and query == 'BEGIN':
 			_nl = len(self.notices)
 			self.conn.query('SET TRANSACTION ISOLATION LEVEL %s' %
 								 self.TransactionLevel)
@@ -3148,7 +3148,17 @@ _stringifyall(vdict)->dict
 					pass # PostgreSQL version < 7.1 and not in transaction,
 						 # so DROP TABLE/INDEX is ok.
 				else:
-					self.conn._Connection__setupTransaction()
+					match = re_BEGIN.match(query)
+					if match:
+						if match.group('extra'):
+							# there's extra bits, pass them through
+							return self.conn._Connection__setupTransaction(query)
+						else:
+							#ordinary begin, but return quickly
+							return self.conn._Connection__setupTransaction()
+					else:
+						# some normal query, setup and continue
+						self.conn._Connection__setupTransaction()
 
 			if re_DQL.search(query) and \
 			   not (noPostgresCursor or
@@ -3159,11 +3169,17 @@ _stringifyall(vdict)->dict
 			elif _badQuery and self.conn.inTransaction:
 				raise NotSupportedError, \
 					  "DROP [TABLE|INDEX] within a transaction"
+			
 			if not self.conn.inTransaction:
 				if _badQuery:
 					pass # not in transaction so DROP TABLE/INDEX is ok.
 				else:
 					self.conn._Connection__setupTransaction()
+			else:
+				if re_COMMIT.match(query):
+					return self.conn.commit()
+				if re_ROLLBACK.match(query):
+					return self.conn.rollback()
 
 		_nl = len(self.conn.notices)
 
